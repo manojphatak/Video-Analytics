@@ -72,13 +72,5 @@ class KafkaImageCli(KafkaCli):
                                            value_serializer = lambda m: m,
                                            value_deserializer = lambda m: m
                                           )
-        
-    def consume_messages(self):
-        frameid = 0
-        basepath= "/home/manoj/Pictures"
-        for m in self.consumer:
-            print("received message from Kafka")
-            fname= f"{frameid}.jpg"           
-            with open(os.path.join(basepath,fname), "wb") as f:
-                f.write(m.value) 
-                frameid += 1
+       
+   
