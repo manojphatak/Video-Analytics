@@ -17,3 +17,4 @@ Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer an
 - run pylint, formater, profiler
 - Automated Tests
 - Logging
+- arg parser

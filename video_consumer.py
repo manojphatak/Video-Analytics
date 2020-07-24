@@ -67,11 +67,11 @@ def consume_images_from_kafka(kafkaCli):
             matched_faces = match_faces(encod, known_faces, tolerance=0.6)
             matched.extend(matched_faces)
 
-        matched_titles = matched | select(lambda m:m["name"]) | tolist
-        print(set(matched_titles))
+    matched_titles = matched | select(lambda m:m["name"]) | tolist
+    print(set(matched_titles))
 
 
 if __name__ == "__main__":
-    kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=5)
+    kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
     kafkaCli.register_consumer()
     consume_images_from_kafka(kafkaCli)
