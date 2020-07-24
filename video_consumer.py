@@ -16,34 +16,28 @@ def load_known_faces(known_faces_path):
     names = [os.path.splitext(f)[0] for f in imgs]
     imgs = [os.path.join(known_faces_path, img) for img in imgs]
 
-    experiment = {}
-    known_faces = []
+    known_faces = {}
     for n,img in zip(names, imgs):
         image = face_recognition.load_image_file(img)
         face_encoding = face_recognition.face_encodings(image)[0]
-        known_faces.append({
+        hashencod = face_encoding.data.tobytes()
+        known_faces[hashencod] = {
             "name": n,
             "imgfile": img,
             "face_encoding":face_encoding
         }
-        )
-        k = face_encoding.data.tobytes()
-        experiment[k]= n
     return known_faces
 
 
-def match_faces(face_encoding, known_faces, tolerance):
-    matched_faces = []
-    for kf in known_faces:
-        match = face_recognition.compare_faces([kf["face_encoding"]], face_encoding, tolerance)
-        if match:
-            matched_faces.append(kf["name"])
-    return matched_faces
-
-
-def match_faces_new():
-    pass
-
+def match_faces(faceencod, known_faces, tolerance):
+    knonwn_encodes_hashes = known_faces.values()
+    knonwn_encodes = list(map(lambda e: e["face_encoding"], knonwn_encodes_hashes))
+    match = face_recognition.compare_faces(knonwn_encodes, faceencod, tolerance)
+    
+    matches = zip(match, knonwn_encodes_hashes)
+    matches = list(filter(lambda x: x[0], matches))
+    matches = list(map(lambda m: m[1], matches))
+    return matches
 
 
 def consume_images_from_kafka(kafkaCli):
@@ -57,7 +51,8 @@ def consume_images_from_kafka(kafkaCli):
         image = face_recognition.load_image_file(os.path.join(basepath,tempfile))
         face_encoding = face_recognition.face_encodings(image)[0]
         
-        matched_faces = match_faces(face_encoding, known_faces, tolerance=0.9)
+        matched_faces = match_faces(face_encoding, known_faces, tolerance=0.6)
+        matched_faces = list(map(lambda m:m["name"], matched_faces))
         print(matched_faces)
 
 
