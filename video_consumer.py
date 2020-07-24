@@ -55,15 +55,20 @@ def save_image_data_to_jpg(imagedata):
 
 def consume_images_from_kafka(kafkaCli):
     known_faces = load_known_faces(known_faces_path)
+    matched = []
+
     for m in kafkaCli.consumer:
         print(f"received message from Kafka")
         tempjpg = save_image_data_to_jpg(m.value)
         image = face_recognition.load_image_file(tempjpg)
-        face_encoding = face_recognition.face_encodings(image)[0]
+        face_encodings = face_recognition.face_encodings(image)
         
-        matched_faces = match_faces(face_encoding, known_faces, tolerance=0.6)
-        matched_faces = list(map(lambda m:m["name"], matched_faces))
-        print(matched_faces)
+        for encod in face_encodings:
+            matched_faces = match_faces(encod, known_faces, tolerance=0.6)
+            matched.extend(matched_faces)
+
+        matched_titles = matched | select(lambda m:m["name"]) | tolist
+        print(set(matched_titles))
 
 
 if __name__ == "__main__":
