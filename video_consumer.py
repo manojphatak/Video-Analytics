@@ -1,5 +1,6 @@
 import os
 import fnmatch
+import tempfile
 
 import face_recognition
 from pipe import Pipe, select, where
@@ -45,15 +46,19 @@ def match_faces(faceencod, known_faces, tolerance):
                                              | select(lambda m: m[1])     
 
 
+def save_image_data_to_jpg(imagedata):
+    tempjpg = os.path.join(tempfile.gettempdir(),"temp.jpg")
+    with open(tempjpg, "wb") as f:
+        f.write(imagedata) 
+    return tempjpg
+    
 
 def consume_images_from_kafka(kafkaCli):
     known_faces = load_known_faces(known_faces_path)
     for m in kafkaCli.consumer:
         print(f"received message from Kafka")
-        tempfile = "tempfile.jpg"
-        with open(os.path.join(basepath,tempfile), "wb") as f:
-            f.write(m.value) 
-        image = face_recognition.load_image_file(os.path.join(basepath,tempfile))
+        tempjpg = save_image_data_to_jpg(m.value)
+        image = face_recognition.load_image_file(tempjpg)
         face_encoding = face_recognition.face_encodings(image)[0]
         
         matched_faces = match_faces(face_encoding, known_faces, tolerance=0.6)
