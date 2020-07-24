@@ -16,6 +16,10 @@ known_faces_path = os.path.join(basepath, "known_faces")
 def tolist(iterable):
     return list(iterable)
 
+@Pipe
+def toSet(iterable):
+    return set(iterable)
+
 
 def load_known_faces(known_faces_path):
     assert os.path.exists(known_faces_path)
@@ -68,8 +72,9 @@ def consume_images_from_kafka(kafkaCli):
             matched_faces = match_faces(encod, known_faces, tolerance=0.6)
             matched.extend(matched_faces)
 
-    matched_titles = matched | select(lambda m: m["name"]) | tolist
-    print(set(matched_titles))
+    matched_titles = matched | select(lambda m: m["name"]) | tolist | toSet
+    print(matched_titles)
+    return matched_titles
 
 
 if __name__ == "__main__":
