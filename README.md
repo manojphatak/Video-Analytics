@@ -14,3 +14,6 @@ Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer an
 - Output "recognized" faces in the video. Create library of "known faces".
 - Consume youtube video
 - Consume CCTV feeds
+- run pylint, formater, profiler
+- Automated Tests
+- Logging

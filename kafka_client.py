@@ -9,13 +9,15 @@ from config import bootstrap_servers, topic
 
 
 class KafkaCli:
-    def __init__(self, bootstrap_servers, topic,
-                 value_serializer, value_deserializer):
+    def __init__(self, bootstrap_servers, topic,stop_iteration_timeout,
+                 value_serializer, value_deserializer,
+                 ):
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.create_topic(topic)
         self.value_serializer= value_serializer
         self.value_deserializer= value_deserializer
+        self.stop_iteration_timeout= stop_iteration_timeout
         
         
     def create_topic(self, topic):
@@ -47,7 +49,8 @@ class KafkaCli:
                                  enable_auto_commit=False,   #todo: this is temp. Make this to: True
                                  group_id='my-group-1',
                                  value_deserializer= self.value_deserializer,
-                                 bootstrap_servers= self.bootstrap_servers
+                                 bootstrap_servers= self.bootstrap_servers,
+                                 consumer_timeout_ms= self.stop_iteration_timeout  # StopIteration if no message after time in millisec
                         )
         
     def consume_messages(self):
@@ -66,9 +69,10 @@ class KafkaJsonCli(KafkaCli):
 
 
 class KafkaImageCli(KafkaCli):
-    def __init__(self, bootstrap_servers, topic):
+    def __init__(self, bootstrap_servers, topic,stop_iteration_timeout):
         super(KafkaImageCli, self).__init__(bootstrap_servers, 
                                            topic,
+                                           stop_iteration_timeout,
                                            value_serializer = lambda m: m,
                                            value_deserializer = lambda m: m
                                           )
