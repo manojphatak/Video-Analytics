@@ -16,6 +16,7 @@ def load_known_faces(known_faces_path):
     names = [os.path.splitext(f)[0] for f in imgs]
     imgs = [os.path.join(known_faces_path, img) for img in imgs]
 
+    experiment = {}
     known_faces = []
     for n,img in zip(names, imgs):
         image = face_recognition.load_image_file(img)
@@ -26,6 +27,8 @@ def load_known_faces(known_faces_path):
             "face_encoding":face_encoding
         }
         )
+        k = face_encoding.data.tobytes()
+        experiment[k]= n
     return known_faces
 
 
@@ -36,6 +39,11 @@ def match_faces(face_encoding, known_faces, tolerance):
         if match:
             matched_faces.append(kf["name"])
     return matched_faces
+
+
+def match_faces_new():
+    pass
+
 
 
 def consume_images_from_kafka(kafkaCli):
