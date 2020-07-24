@@ -4,6 +4,12 @@ Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer an
 # References
 - Face Detection library: https://ourcodeworld.com/articles/read/841/how-to-install-and-use-the-python-face-recognition-and-detection-library-in-ubuntu-16-04
 
+# Run linter & style checker
+```
+pip install autopep8
+autopep8 --in-place --aggressive --aggressive <filename>
+```
+
 
 # Feature Backlog
 - Set git workflows & commit to master
