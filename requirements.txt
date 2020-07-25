@@ -15,7 +15,9 @@ Pillow==7.2.0
 pipe==1.6.0
 pycodestyle==2.6.0
 pylint==2.5.3
+pytube3==9.6.4
 rope==0.17.0
 six==1.15.0
 toml==0.10.1
+typing-extensions==3.7.4.2
 wrapt==1.12.1
