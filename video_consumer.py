@@ -1,8 +1,10 @@
 import os
+import sys
 import fnmatch
 import tempfile
 import string
 import random
+import argparse
 from functools import reduce
 
 import face_recognition
@@ -10,9 +12,6 @@ from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
 from config import bootstrap_servers, topic
-
-basepath = "/home/manoj/Pictures"
-known_faces_path = os.path.join(basepath, "known_faces")
 
 
 @Pipe
@@ -69,7 +68,7 @@ def save_image_data_to_jpg(imagedata):
     return tempjpg
 
 
-def consume_images_from_kafka(kafkaCli):
+def consume_images_from_kafka(kafkaCli, known_faces_path):
     '''
     "all_faces" is a dictionary with structure as follows:
     Each face is identified by the "hash of its face encoding"
@@ -120,10 +119,19 @@ def get_names_of_all_matched_images(faces):
     return matched_titles
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--knownfaces", help="")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     kafkaCli = KafkaImageCli(
         bootstrap_servers=bootstrap_servers,
         topic=topic,
         stop_iteration_timeout=3000)
     kafkaCli.register_consumer()
-    consume_images_from_kafka(kafkaCli)
+
+    args = parse_arguments()
+    assert args.knownfaces, "file path for known faces is not provided"
+    consume_images_from_kafka(kafkaCli, known_faces_path= args.knownfaces)

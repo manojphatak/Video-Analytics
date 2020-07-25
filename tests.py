@@ -15,7 +15,7 @@ class TestVideoConsumer(unittest.TestCase):
             stop_iteration_timeout=3000)
 
         kafkaCli.register_consumer()
-        matched_titles = consume_images_from_kafka(kafkaCli)
+        matched_titles = consume_images_from_kafka(kafkaCli, known_faces_path= "/home/manoj/Pictures/known_faces")
         self.assertEqual(
             set(['Manoj_direct', 'Manoj_with_beard', 'Manoj_US_Visa']), matched_titles)
 
