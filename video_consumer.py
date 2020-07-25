@@ -104,6 +104,8 @@ def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
                         "face_encoding": encod
                     }
                 all_faces[hash_of_encoding(encod)] = {"matches": [matches]}
+                save_image_data_to_jpg(m.value, known_faces_path) # This is an unknown face so far. Copy it to folder of known faces
+                known_faces = load_known_faces(known_faces_path)  # Reload the known faces
 
     matched_titles = get_names_of_all_matched_images(all_faces)
     print(matched_titles)
