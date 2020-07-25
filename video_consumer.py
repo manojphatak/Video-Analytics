@@ -56,19 +56,20 @@ def match_faces(faceencod, known_faces, tolerance):
         | tolist     
 
 
-def save_image_data_to_jpg(imagedata):
+def save_image_data_to_jpg(imagedata, outpath):
     def get_random_filename():
         letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
         fname = "".join(letters)
         return f"{fname}.jpg"
 
-    tempjpg = os.path.join(tempfile.gettempdir(), get_random_filename())
+    assert os.path.exists(outpath)
+    tempjpg = os.path.join(outpath, get_random_filename())
     with open(tempjpg, "wb") as f:
         f.write(imagedata)
     return tempjpg
 
 
-def consume_images_from_kafka(kafkaCli, known_faces_path):
+def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
     '''
     "all_faces" is a dictionary with structure as follows:
     Each face is identified by the "hash of its face encoding"
@@ -88,7 +89,7 @@ def consume_images_from_kafka(kafkaCli, known_faces_path):
 
     for m in kafkaCli.consumer:
         print(f"received message from Kafka")
-        tempjpg = save_image_data_to_jpg(m.value)
+        tempjpg = save_image_data_to_jpg(m.value, outpath)
         image = face_recognition.load_image_file(tempjpg)
         face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
 
@@ -122,6 +123,7 @@ def get_names_of_all_matched_images(faces):
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--knownfaces", help="")
+    parser.add_argument("--outpath", help="")
     return parser.parse_args()
 
 
@@ -134,4 +136,5 @@ if __name__ == "__main__":
 
     args = parse_arguments()
     assert args.knownfaces, "file path for known faces is not provided"
-    consume_images_from_kafka(kafkaCli, known_faces_path= args.knownfaces)
+    assert args.outpath
+    consume_images_from_kafka(kafkaCli, known_faces_path= args.knownfaces, outpath= args.outpath)
