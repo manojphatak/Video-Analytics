@@ -23,6 +23,9 @@ def tolist(iterable):
 def toSet(iterable):
     return set(iterable)
 
+def hash_of_encoding(encod):
+    return encod.data.tobytes()
+
 
 def load_known_faces(known_faces_path):
     assert os.path.exists(known_faces_path)
@@ -34,7 +37,7 @@ def load_known_faces(known_faces_path):
     for title, fpath in zip(image_titles, jpgfpaths):
         image = face_recognition.load_image_file(fpath)
         face_encoding = face_recognition.face_encodings(image)[0]
-        hashencod = face_encoding.data.tobytes()   # Take hash of face-encode matrix, to serve as dict key
+        hashencod = hash_of_encoding(face_encoding)   # Take hash of face-encode matrix, to serve as dict key
         known_faces[hashencod] = {
             "name": title,
             "imgfile": fpath,
@@ -68,8 +71,9 @@ def save_image_data_to_jpg(imagedata):
 
 def consume_images_from_kafka(kafkaCli):
     '''
-    "matched" is a dictionary with structure as follows:
-    matched = {
+    "all_faces" is a dictionary with structure as follows:
+    Each face is identified by the "hash of its face encoding"
+    all_faces = {
         <hash-of-the-encoding>: {
             "matches": [{
                 "name": <title of the image>,   # "unknown" if it doesn't match with anything
@@ -81,7 +85,7 @@ def consume_images_from_kafka(kafkaCli):
     }
     '''
     known_faces = load_known_faces(known_faces_path)
-    matched = {}
+    all_faces = {}
 
     for m in kafkaCli.consumer:
         print(f"received message from Kafka")
@@ -92,16 +96,16 @@ def consume_images_from_kafka(kafkaCli):
         for encod in face_encodings:
             matched_faces = match_faces(encod, known_faces, tolerance=0.6)
             if matched_faces:
-                matched[encod.data.tobytes()] = {"matches": matched_faces}
+                all_faces[hash_of_encoding(encod)] = {"matches": matched_faces}
             else:
                 matches = {
                         "name": "unknown",
                         "imgfile": tempjpg,
                         "face_encoding": encod
                     }
-                matched[encod.data.tobytes()] = {"matches": [matches]}
+                all_faces[hash_of_encoding(encod)] = {"matches": [matches]}
 
-    matched_titles = get_names_of_all_matched_images(matched)
+    matched_titles = get_names_of_all_matched_images(all_faces)
     print(matched_titles)
     return matched_titles
 
