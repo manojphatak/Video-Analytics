@@ -31,7 +31,7 @@ def load_known_faces(known_faces_path):
     for title, fpath in zip(image_titles, jpgfpaths):
         image = face_recognition.load_image_file(fpath)
         face_encoding = face_recognition.face_encodings(image)[0]
-        hashencod = face_encoding.data.tobytes()
+        hashencod = face_encoding.data.tobytes()   # Take hash of face-encode matrix, to serve as dict key
         known_faces[hashencod] = {
             "name": title,
             "imgfile": fpath,
@@ -41,12 +41,13 @@ def load_known_faces(known_faces_path):
 
 
 def match_faces(faceencod, known_faces, tolerance):
-    knonwn_encodes_hashes = known_faces.values()
+    knonwn_faces_records = known_faces.values()
 
-    knonwn_encodes = knonwn_encodes_hashes | select(lambda e: e["face_encoding"]) | tolist
+    knonwn_encodes = known_faces.values() | select(lambda e: e["face_encoding"]) | tolist
     matches = face_recognition.compare_faces(knonwn_encodes, faceencod, tolerance)
 
-    return zip(matches, knonwn_encodes_hashes) \
+    # Select only matched records
+    return zip(matches, knonwn_faces_records) \
         | where(lambda x: x[0])    \
         | select(lambda m: m[1])
 
@@ -66,7 +67,7 @@ def consume_images_from_kafka(kafkaCli):
         print(f"received message from Kafka")
         tempjpg = save_image_data_to_jpg(m.value)
         image = face_recognition.load_image_file(tempjpg)
-        face_encodings = face_recognition.face_encodings(image)
+        face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
 
         for encod in face_encodings:
             matched_faces = match_faces(encod, known_faces, tolerance=0.6)
