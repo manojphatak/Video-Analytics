@@ -11,7 +11,7 @@ import face_recognition
 from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
-from config import bootstrap_servers, topic
+from config import bootstrap_servers
 
 
 @Pipe
@@ -93,6 +93,9 @@ def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
         image = face_recognition.load_image_file(tempjpg)
         face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
 
+        if not face_encodings:
+            os.remove(tempjpg)  # remove the jpg, since it doesn't contain any faces
+
         for encod in face_encodings:
             matched_faces = match_faces(encod, known_faces, tolerance=0.6)
             if matched_faces:
@@ -126,17 +129,23 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--knownfaces", help="")
     parser.add_argument("--outpath", help="")
+    parser.add_argument("--kafkatopic", help="")
+
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    kafkaCli = KafkaImageCli(
-        bootstrap_servers=bootstrap_servers,
-        topic=topic,
-        stop_iteration_timeout=3000)
-    kafkaCli.register_consumer()
-
     args = parse_arguments()
     assert args.knownfaces, "file path for known faces is not provided"
     assert args.outpath
-    consume_images_from_kafka(kafkaCli, known_faces_path= args.knownfaces, outpath= args.outpath)
+
+    kafkaCli = KafkaImageCli(
+        bootstrap_servers=bootstrap_servers,
+        topic= args.kafkatopic,
+        stop_iteration_timeout=3000)
+
+    kafkaCli.register_consumer()
+    consume_images_from_kafka(kafkaCli, 
+                              known_faces_path= args.knownfaces, 
+                              outpath= args.outpath
+                              )

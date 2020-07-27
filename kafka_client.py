@@ -5,7 +5,7 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-from config import bootstrap_servers, topic
+from config import bootstrap_servers
 
 
 class KafkaCli:

@@ -1,18 +1,21 @@
 import os
+import argparse
+
 import cv2
 
-from config import topic, bootstrap_servers, testvideo
+from config import bootstrap_servers
 from kafka_client import KafkaImageCli
 
-def stream_video_from_file(moviefile):
+def stream_video_from_file(moviefile, topic):
     kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
     
     assert os.path.exists(moviefile)
     video = cv2.VideoCapture(moviefile)
     
-    frames_to_skip = 25
+    fps= video.get(cv2.CAP_PROP_FPS)
+    frames_to_skip = fps * 60   # we are capturing a frame every minute
     numframes = 0
-    maxframes = frames_to_skip * 15
+    maxframes = float('inf')
     while(video.isOpened()):
         success, frame = video.read()
         if not success: break
@@ -28,5 +31,15 @@ def stream_video_from_file(moviefile):
     video.release()    
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--videofile", help="")
+    parser.add_argument("--kafkatopic", help="")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    stream_video_from_file(testvideo)
+    args = parse_arguments()
+    assert args.videofile, "pl profile filepath for the videofile to parse"
+    assert args.kafkatopic
+    stream_video_from_file(args.videofile, args.kafkatopic)
