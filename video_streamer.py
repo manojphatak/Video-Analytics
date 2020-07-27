@@ -40,6 +40,10 @@ def stream_video_from_file(moviefile, topic):
         if frameid > maxframes: break
 
         logger.debug(f"Processing frame #{frameid}")
+        
+        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+        frame = frame[:, :, ::-1]
+        
         ret, buffer = cv2.imencode('.jpg', frame)
         kafkaCli.send_message(buffer.tobytes())
         
