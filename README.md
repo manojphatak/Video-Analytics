@@ -11,6 +11,12 @@ autopep8 --in-place --aggressive --aggressive <filename>
 ```
 
 ## Usage
+- Download YouTube Videos
+```
+sudo youtube-dl -F <url>   
+sudo youtube-dl -f <id> url
+```
+
 - Delete earlier test message if required...
 ```
 sudo docker exec -i -t -u root $(sudo docker ps | grep kafka_kafka | cut -d' ' -f1) /bin/bash   # take bash inside kafka container...
@@ -30,7 +36,6 @@ python video_consumer.py --knownfaces /home/manoj/Pictures/known_faces_empty --o
 ```
 python video_streamer.py --videofile "/home/manoj/Videos/YouTube/ShriyutGangadharTipre_ MarathiSerial.webm" --kafkatopic testimages2
 ```
-
 
 ## Feature Backlog
 - Set git workflows & commit to master

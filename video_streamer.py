@@ -1,10 +1,18 @@
 import os
 import argparse
+import logging
 
 import cv2
 
 from config import bootstrap_servers
 from kafka_client import KafkaImageCli
+
+# This sets the root logger to write to stdout (your console).
+# Your script/app needs to call this somewhere at least once.
+logging.basicConfig()
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 def stream_video_from_file(moviefile, topic):
     kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
@@ -12,19 +20,26 @@ def stream_video_from_file(moviefile, topic):
     assert os.path.exists(moviefile)
     video = cv2.VideoCapture(moviefile)
     
+    totalframes= video.get(cv2.CAP_PROP_FRAME_COUNT)
     fps= video.get(cv2.CAP_PROP_FPS)
-    frames_to_skip = fps * 60   # we are capturing a frame every minute
-    numframes = 0
+    frames_to_skip = fps * 10   # we are capturing aframe every minute
+
+    logger.info("---------- Summay ----------")
+    logger.info(f"Total # of frames: {totalframes}")
+    logger.info(f"fps: {fps}")
+    logger.info(f"Frames to skip: {frames_to_skip}")
+
+    frameid = -1
     maxframes = float('inf')
     while(video.isOpened()):
         success, frame = video.read()
         if not success: break
-        numframes += 1 
-        if numframes % frames_to_skip: continue
-        if numframes > maxframes: break
 
-        print(f"Processing frame #{numframes}")
+        frameid += 1 
+        if frameid % frames_to_skip: continue
+        if frameid > maxframes: break
 
+        logger.debug(f"Processing frame #{frameid}")
         ret, buffer = cv2.imencode('.jpg', frame)
         kafkaCli.send_message(buffer.tobytes())
         

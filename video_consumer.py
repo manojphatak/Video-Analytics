@@ -5,6 +5,7 @@ import tempfile
 import string
 import random
 import argparse
+import logging
 from functools import reduce
 
 import face_recognition
@@ -13,6 +14,13 @@ from pipe import Pipe, select, where
 from kafka_client import KafkaImageCli
 from config import bootstrap_servers
 
+
+# This sets the root logger to write to stdout (your console).
+# Your script/app needs to call this somewhere at least once.
+logging.basicConfig()
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 @Pipe
 def tolist(iterable):
@@ -88,7 +96,7 @@ def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
     all_faces = {}
 
     for m in kafkaCli.consumer:
-        print(f"received message from Kafka")
+        logger.debug(f"received message from Kafka")
         tempjpg = save_image_data_to_jpg(m.value, outpath)
         image = face_recognition.load_image_file(tempjpg)
         face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
@@ -111,7 +119,6 @@ def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
                 known_faces = load_known_faces(known_faces_path)  # Reload the known faces
 
     matched_titles = get_names_of_all_matched_images(all_faces)
-    print(matched_titles)
     return matched_titles
 
 
@@ -145,7 +152,8 @@ if __name__ == "__main__":
         stop_iteration_timeout=3000)
 
     kafkaCli.register_consumer()
-    consume_images_from_kafka(kafkaCli, 
-                              known_faces_path= args.knownfaces, 
-                              outpath= args.outpath
-                              )
+    matched_titles= consume_images_from_kafka(kafkaCli, 
+                                            known_faces_path= args.knownfaces, 
+                                            outpath= args.outpath
+                                            )
+    print(matched_titles)
