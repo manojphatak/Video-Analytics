@@ -1,5 +1,6 @@
 
-FROM digi0ps/python-opencv-dlib:latest
+#FROM digi0ps/python-opencv-dlib:latest
+FROM spmallick/opencv-docker:opencv
 
 #ADD requirements_docker.txt /usr/src/app
 ADD * /usr/src/app/
