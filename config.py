@@ -1,1 +1,1 @@
-bootstrap_servers=['kafka:29094'] #localhost
+bootstrap_servers=['kafka:29092'] #localhost
