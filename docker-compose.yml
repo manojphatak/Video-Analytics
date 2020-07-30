@@ -4,6 +4,7 @@ services:
     image: wurstmeister/zookeeper:3.4.6
     ports:
      - "2181:2181"
+  
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -18,3 +19,14 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
      - /var/run/docker.sock:/var/run/docker.sock
+
+  video-streamer:
+    build: .
+    links:
+     - kafka
+    depends_on:
+     - kafka      
+    volumes:
+     -  /var/run/docker.sock:/var/run/docker.sock 
+     -  /home/manoj/Videos/Webcam/testvideo.webm:/usr/src/app/testvideo.webm
+  

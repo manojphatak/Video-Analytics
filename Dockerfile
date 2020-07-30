@@ -10,3 +10,7 @@ RUN cd /usr/src/app \
     && git checkout dockerize \
     && pip3 install -r requirements_docker.txt
 
+#COPY Dockerfile  /usr/src/app/Video-Analytics
+
+CMD tail -f /dev/null
+
