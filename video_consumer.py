@@ -68,7 +68,7 @@ def save_image_data_to_jpg(imagedata, outpath):
     def get_random_filename():
         letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
         fname = "".join(letters)
-        return f"{fname}.jpg"
+        return "{fname}.jpg".format(fname= fname)
 
     assert os.path.exists(outpath)
     tempjpg = os.path.join(outpath, get_random_filename())
@@ -95,8 +95,9 @@ def consume_images_from_kafka(kafkaCli, known_faces_path, outpath):
     known_faces = load_known_faces(known_faces_path)
     all_faces = {}
 
+    logger.debug("polling kafka topic now...")
     for m in kafkaCli.consumer:
-        logger.debug(f"received message from Kafka")
+        logger.debug("received message from Kafka")
         tempjpg = save_image_data_to_jpg(m.value, outpath)
         image = face_recognition.load_image_file(tempjpg)
         face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces

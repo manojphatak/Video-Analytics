@@ -16,7 +16,7 @@ class KafkaCli:
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,
                  value_serializer, value_deserializer,
                  ):
-        logger.debug(f"Initalized KafkaCli with bootstrap servers: {bootstrap_servers}")
+        logger.info("Initializing KafkaCli with servers: {servers}".format(servers= bootstrap_servers))
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.create_topic(topic)
