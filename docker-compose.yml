@@ -29,7 +29,9 @@ services:
       - test 
 
   streamer:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-Streamer
     container_name: streamer
     links:
      - kafka:kafka
@@ -39,7 +41,7 @@ services:
      -  /var/run/docker.sock:/var/run/docker.sock 
      -  /home/manoj/Videos/Webcam/testvideo.webm:/usr/src/app/testvideo.webm
      -  /home/manoj/Videos/YouTube/Tipre.webm:/usr/src/app/Tipre.webm
-     - .:/usr/src/app
+     - .:/usr/src/app/Video-Analytics
     networks:
       - test 
 

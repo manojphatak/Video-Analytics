@@ -1,0 +1,7 @@
+pipe
+kafka-python
+dlib
+opencv-python
+opencv-contrib-python
+face-recognition
+face-recognition-models
