@@ -1,5 +1,6 @@
 from json import dumps, loads
 import os
+import logging
 
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
@@ -7,17 +8,22 @@ from kafka.errors import TopicAlreadyExistsError
 
 from config import bootstrap_servers
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class KafkaCli:
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,
                  value_serializer, value_deserializer,
                  ):
+        logger.info("Initializing KafkaCli with servers: {servers}".format(servers= bootstrap_servers))
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.create_topic(topic)
         self.value_serializer = value_serializer
         self.value_deserializer = value_deserializer
         self.stop_iteration_timeout = stop_iteration_timeout
+        
 
     def create_topic(self, topic):
         try:

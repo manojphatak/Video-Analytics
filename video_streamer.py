@@ -25,9 +25,10 @@ def stream_video_from_file(moviefile, topic):
     frames_to_skip = fps * 10   # we are capturing aframe every minute
 
     logger.info("---------- Summay ----------")
-    logger.info(f"Total # of frames: {totalframes}")
-    logger.info(f"fps: {fps}")
-    logger.info(f"Frames to skip: {frames_to_skip}")
+    logger.info("Total # of frames: {numframes}".format(numframes= totalframes))
+    logger.info("fps: {fps}".format(fps= fps))
+    logger.info("Frames to skip: {frames_to_skip}".format(frames_to_skip= frames_to_skip))
+    
 
     frameid = -1
     maxframes = float('inf')
@@ -39,7 +40,7 @@ def stream_video_from_file(moviefile, topic):
         if frameid % frames_to_skip: continue
         if frameid > maxframes: break
 
-        logger.debug(f"Processing frame #{frameid}")
+        logger.debug("Processing frame #{id}".format(id= frameid))
         
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         frame = frame[:, :, ::-1]
