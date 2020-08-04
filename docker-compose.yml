@@ -44,6 +44,8 @@ services:
      -  /home/manoj/Videos/Webcam/testvideo.webm:/usr/src/app/testvideo.webm
      -  /home/manoj/Videos/YouTube/Tipre.webm:/usr/src/app/Tipre.webm
      - .:/usr/src/app/Video-Analytics-local  #this is for testing the code before commit
+    environment: 
+     - RUN_TESTS_INSIDE_CONTAINER=true  
     networks:
       - test 
 

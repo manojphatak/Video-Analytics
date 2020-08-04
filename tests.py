@@ -1,14 +1,24 @@
 import unittest
 import os
+import logging
 
 from kafka_client import KafkaImageCli
 import video_streamer
 from video_consumer import consume_images_from_kafka
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class TestVideoConsumer(unittest.TestCase):
     def test_detect_known_faces(self):
-        bootstrap_servers= ['kafka:29092'] #['localhost:9092']   #todo: this should work within as well as outside container
+        inside_container= os.environ.get("RUN_TESTS_INSIDE_CONTAINER", False)
+        logger.debug("Environment variable RUN_TESTS_INSIDE_CONTAINER: {v}".format(v=inside_container))
+        if inside_container:
+            bootstrap_servers= ['kafka:29092']
+        else:
+            bootstrap_servers= ['localhost:9092']
+        
         videofile= "./testvideo.webm"
         kafkatopic= "tests"
         outdir= "/tmp/VideoAnalytics/out"
