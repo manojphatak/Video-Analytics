@@ -4,7 +4,7 @@ import logging
 
 import cv2
 
-from config import bootstrap_servers
+from config import bootstrap_servers   #todo: this should come from arguments
 from kafka_client import KafkaImageCli
 
 # This sets the root logger to write to stdout (your console).
@@ -14,7 +14,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-def stream_video_from_file(moviefile, topic):
+def stream_video_from_file(moviefile, topic, bootstrap_servers= bootstrap_servers):
     kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
     
     assert os.path.exists(moviefile)

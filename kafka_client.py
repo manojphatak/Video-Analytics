@@ -6,7 +6,6 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-from config import bootstrap_servers
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -28,7 +27,7 @@ class KafkaCli:
     def create_topic(self, topic):
         try:
             admin_client = KafkaAdminClient(
-                bootstrap_servers=bootstrap_servers,
+                bootstrap_servers= self.bootstrap_servers,
             )
 
             topic_list = []
@@ -42,7 +41,7 @@ class KafkaCli:
     def send_message(self, msg):
         producer = KafkaProducer(
             value_serializer=self.value_serializer,
-            bootstrap_servers=bootstrap_servers
+            bootstrap_servers= self.bootstrap_servers
         )
 
         producer.send(self.topic, value=msg)

@@ -150,7 +150,7 @@ if __name__ == "__main__":
     kafkaCli = KafkaImageCli(
         bootstrap_servers=bootstrap_servers,
         topic= args.kafkatopic,
-        stop_iteration_timeout=3000)
+        stop_iteration_timeout=5000)
 
     kafkaCli.register_consumer()
     matched_titles= consume_images_from_kafka(kafkaCli, 
