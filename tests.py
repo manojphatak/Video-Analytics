@@ -24,8 +24,8 @@ class TestVideoConsumer(unittest.TestCase):
         outdir= "/tmp/VideoAnalytics/out"
         facesDir= "/tmp/VideoAnalytics/faces"
 
-        #todo: create temp diretories
-        assert os.path.exists(outdir) and os.path.exists(facesDir)
+        assert os.path.exists(outdir), "file path does not exist! : " + outdir
+        assert os.path.exists(facesDir), "file path does not exist! : " + facesDir
 
         video_streamer.stream_video_from_file(videofile, kafkatopic,bootstrap_servers)
 
