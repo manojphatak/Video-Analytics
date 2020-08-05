@@ -4,7 +4,6 @@ import logging
 
 import cv2
 
-from config import bootstrap_servers   #todo: this should come from arguments
 from kafka_client import KafkaImageCli
 
 # This sets the root logger to write to stdout (your console).
@@ -14,7 +13,8 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-def stream_video_from_file(moviefile, topic, bootstrap_servers= bootstrap_servers):
+def stream_video_from_file(moviefile, topic, bootstrap_servers):
+    logger.debug("streaming to kafka endpoint: {e}".format(e=bootstrap_servers))
     kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
     
     assert os.path.exists(moviefile)
@@ -55,6 +55,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--videofile", help="")
     parser.add_argument("--kafkatopic", help="")
+    parser.add_argument("--kafka-endpt", dest= "kafka_endpt", help="")
     return parser.parse_args()
 
 
@@ -62,4 +63,7 @@ if __name__ == "__main__":
     args = parse_arguments()
     assert args.videofile, "pl profile filepath for the videofile to parse"
     assert args.kafkatopic
-    stream_video_from_file(args.videofile, args.kafkatopic)
+    assert args.kafka_endpt
+    kafka_endpt = args.kafka_endpt.split(",")  #converting to list
+    assert kafka_endpt, "kafka bootstrap server list is empty"
+    stream_video_from_file(args.videofile, args.kafkatopic, kafka_endpt)
