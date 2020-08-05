@@ -38,15 +38,5 @@ python video_streamer.py --videofile "/home/manoj/Videos/YouTube/ShriyutGangadha
 ```
 
 ## Feature Backlog
-- Set git workflows & commit to master
-
-### Output unique faces 
-- Run video consumer in non-blocking mode
-- Output "unique" faces in the video. 
-- Output "recognized" faces in the video. Create library of "known faces".
-- Consume youtube video
-- Consume CCTV feeds
-- run pylint, formater, profiler
-- Automated Tests
-- Logging
-- arg parser
+- Run tests outside container as well
+- Cleanup: fix #todos
