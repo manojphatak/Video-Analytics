@@ -49,6 +49,10 @@ services:
     networks:
       - test
     working_dir: /usr/src/app/Video-Analytics
+    command: >
+        sh -c "git checkout refactoring-docker &&
+               git pull &&
+               tail -f /dev/null"
       
     #healthcheck:
     #  test: ["CMD-SHELL","python3", "tests.py" ]

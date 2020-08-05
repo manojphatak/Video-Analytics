@@ -52,6 +52,4 @@ python3 tests.py
 
 
 ## Feature Backlog
-- Run tests outside container as well
-- Cleanup: fix #todos
-- docker-compose entrypoint: git pull
+- docker swarm
