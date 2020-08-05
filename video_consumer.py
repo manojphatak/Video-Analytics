@@ -12,7 +12,6 @@ import face_recognition
 from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
-from config import bootstrap_servers
 
 
 # This sets the root logger to write to stdout (your console).
@@ -138,6 +137,7 @@ def parse_arguments():
     parser.add_argument("--knownfaces", help="")
     parser.add_argument("--outpath", help="")
     parser.add_argument("--kafkatopic", help="")
+    parser.add_argument("--kafka-endpt", dest= "kafka_endpt", help="")
 
     return parser.parse_args()
 
@@ -146,11 +146,14 @@ if __name__ == "__main__":
     args = parse_arguments()
     assert args.knownfaces, "file path for known faces is not provided"
     assert args.outpath
+    assert args.kafka_endpt
+    kafka_endpt = args.kafka_endpt.split(",")  #converting to list
+    assert kafka_endpt, "kafka bootstrap server list is empty"
 
     kafkaCli = KafkaImageCli(
-        bootstrap_servers=bootstrap_servers,
+        bootstrap_servers=kafka_endpt,
         topic= args.kafkatopic,
-        stop_iteration_timeout=3000)
+        stop_iteration_timeout=5000)
 
     kafkaCli.register_consumer()
     matched_titles= consume_images_from_kafka(kafkaCli, 

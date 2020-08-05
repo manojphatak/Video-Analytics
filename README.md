@@ -30,23 +30,26 @@ $KAFKA_HOME/bin/kafka-console-producer.sh --broker-list kafka:9092 --topic=test 
 
 - Run Consumer
 ```
-python video_consumer.py --knownfaces /home/manoj/Pictures/known_faces_empty --outpath /home/manoj/Pictures/out --kafkatopic testimages2
+python3 video_consumer.py --knownfaces /home/manoj/Pictures/known_faces_empty --outpath /home/manoj/Pictures/out --kafkatopic testimages2 --kafka-endpt "localhost:9092"
 ```
 - Run Streamer
 ```
-python video_streamer.py --videofile "/home/manoj/Videos/YouTube/ShriyutGangadharTipre_ MarathiSerial.webm" --kafkatopic testimages2
+python3 video_streamer.py --videofile "/home/manoj/Videos/YouTube/ShriyutGangadharTipre_ MarathiSerial.webm" --kafkatopic testimages2 --kafka-endpt "localhost:9092"
 ```
 
-## Feature Backlog
-- Set git workflows & commit to master
+- regarding endpoint -kafka-endpt
+```
+Use "localhost:9092", if you are running scripts from outside docker container
+Use "kafka:29092", if you are running scripts from within the docker container
+```
 
-### Output unique faces 
-- Run video consumer in non-blocking mode
-- Output "unique" faces in the video. 
-- Output "recognized" faces in the video. Create library of "known faces".
-- Consume youtube video
-- Consume CCTV feeds
-- run pylint, formater, profiler
-- Automated Tests
-- Logging
-- arg parser
+- Run Tests
+```
+# Reads movie file from file system, streams to kafka & consumes from kafka
+# One needs to edit the hardcoded movie file name inside tests.py to run on respective machine
+python3 tests.py   
+```
+
+
+## Feature Backlog
+- docker swarm
