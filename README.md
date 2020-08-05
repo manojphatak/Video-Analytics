@@ -40,3 +40,4 @@ python video_streamer.py --videofile "/home/manoj/Videos/YouTube/ShriyutGangadha
 ## Feature Backlog
 - Run tests outside container as well
 - Cleanup: fix #todos
+- docker-compose entrypoint: git pull
