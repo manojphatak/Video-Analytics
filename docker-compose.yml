@@ -10,9 +10,10 @@ services:
      - .:/usr/src/app/Video-Analytics-local  #this is for testing the code before commit
      - /tmp/VideoAnalytics/out:/tmp/VideoAnalytics/out
      - /tmp/VideoAnalytics/faces:/tmp/VideoAnalytics/faces
-          
-    environment: 
-     - RUN_TESTS_INSIDE_CONTAINER=true  
+   
+    environment:
+      RUN_TESTS_INSIDE_CONTAINER: 1 
+    
     working_dir: /usr/src/app/Video-Analytics
     command: >
         sh -c "git pull origin dynamic &&
