@@ -10,11 +10,12 @@ services:
      - .:/usr/src/app/Video-Analytics-local  #this is for testing the code before commit
      - /tmp/VideoAnalytics/out:/tmp/VideoAnalytics/out
      - /tmp/VideoAnalytics/faces:/tmp/VideoAnalytics/faces
+     - ~/Videos/testdata:/tmp/testdata
    
     environment:
       RUN_TESTS_INSIDE_CONTAINER: 1 
-      KAFKA_CLIENT_BLOCKING_TIMEOUT: 600000  # 10 mins
-      STREAMER_VIDEOFILE_FOR_TESTS: "./testvideo.webm"
+      KAFKA_CLIENT_BLOCKING_TIMEOUT: 6000  # milliseconds
+      STREAMER_VIDEOFILE_FOR_TESTS: "/tmp/testdata/testvideo.webm"
           
     working_dir: /usr/src/app/Video-Analytics
     command: >

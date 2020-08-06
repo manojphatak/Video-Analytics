@@ -20,7 +20,7 @@ def stream_video_from_file(moviefile, topic, bootstrap_servers):
                              topic= topic,
                              stop_iteration_timeout= get_env("KAFKA_CLIENT_BLOCKING_TIMEOUT", 3000,int))
     
-    assert os.path.exists(moviefile)
+    assert os.path.exists(moviefile), moviefile 
     video = cv2.VideoCapture(moviefile)
     
     totalframes= video.get(cv2.CAP_PROP_FRAME_COUNT)

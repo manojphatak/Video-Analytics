@@ -58,3 +58,6 @@ autopep8 --in-place --aggressive --aggressive <filename>
 
 ## Feature Backlog
 - docker swarm
+
+## Bugs
+- testdata is not getting copied from host to container
