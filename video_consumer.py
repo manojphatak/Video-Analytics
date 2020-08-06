@@ -12,6 +12,7 @@ import face_recognition
 from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
+from common import get_env
 
 
 # This sets the root logger to write to stdout (your console).
@@ -153,7 +154,7 @@ if __name__ == "__main__":
     kafkaCli = KafkaImageCli(
         bootstrap_servers=kafka_endpt,
         topic= args.kafkatopic,
-        stop_iteration_timeout=5000)
+        stop_iteration_timeout= get_env("KAFKA_CLIENT_BLOCKING_TIMEOUT", 5000,int))
 
     kafkaCli.register_consumer()
     matched_titles= consume_images_from_kafka(kafkaCli, 

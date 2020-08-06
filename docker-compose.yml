@@ -13,7 +13,9 @@ services:
    
     environment:
       RUN_TESTS_INSIDE_CONTAINER: 1 
-    
+      KAFKA_CLIENT_BLOCKING_TIMEOUT: 600000  # 10 mins
+      STREAMER_VIDEOFILE_FOR_TESTS: "./testvideo.webm"
+          
     working_dir: /usr/src/app/Video-Analytics
     command: >
         sh -c "git pull origin dynamic &&

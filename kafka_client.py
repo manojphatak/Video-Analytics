@@ -50,7 +50,7 @@ class KafkaCli:
     def register_consumer(self):
         self.consumer = KafkaConsumer(self.topic,
                                       auto_offset_reset='earliest',
-                                      enable_auto_commit=False,  # todo: this is temp. Make this to: True
+                                      enable_auto_commit=True,  # make this to False, if we want to consume from begining
                                       group_id='my-group-1',
                                       value_deserializer=self.value_deserializer,
                                       bootstrap_servers=self.bootstrap_servers,
