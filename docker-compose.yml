@@ -10,7 +10,7 @@ services:
      - .:/usr/src/app/Video-Analytics-local  #this is for testing the code before commit
      - /tmp/VideoAnalytics/out:/tmp/VideoAnalytics/out
      - /tmp/VideoAnalytics/faces:/tmp/VideoAnalytics/faces
-     - ~/Videos/testdata:/tmp/testdata
+     - /tmp/testdata:/tmp/testdata  # modifiy to suit your machine
    
     environment:
       RUN_TESTS_INSIDE_CONTAINER: 1 
