@@ -14,13 +14,7 @@ from pipe import Pipe, select, where
 from kafka_client import KafkaImageCli
 from common import get_env
 
-
-# This sets the root logger to write to stdout (your console).
-# Your script/app needs to call this somewhere at least once.
-logging.basicConfig()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("my_module")
 
 @Pipe
 def tolist(iterable):

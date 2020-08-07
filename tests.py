@@ -1,18 +1,28 @@
 import unittest
 import os
 import logging
+import logging.config
+import yaml
 
 from kafka_client import KafkaImageCli
 import video_streamer
 from video_consumer import consume_images_from_kafka
 from common import get_env
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+
+
+def setup_logging():
+    with open("logging.yml", 'rt') as f:
+        config = yaml.load(f.read(), Loader=yaml.Loader)
+    logging.config.dictConfig(config)
+    #logging.config.fileConfig("logging.yml")
+
 
 class TestVideoConsumer(unittest.TestCase):
     def test_detect_known_faces(self):
+        setup_logging()
+        logger = logging.getLogger("my_module")
         inside_container= os.environ.get("RUN_TESTS_INSIDE_CONTAINER", False)
         logger.debug("Environment variable RUN_TESTS_INSIDE_CONTAINER: {v}".format(v=inside_container))
         if inside_container:

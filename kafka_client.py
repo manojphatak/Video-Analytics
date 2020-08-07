@@ -6,10 +6,7 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("my_module")
 
 class KafkaCli:
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,

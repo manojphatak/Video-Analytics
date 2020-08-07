@@ -7,12 +7,7 @@ import cv2
 from kafka_client import KafkaImageCli
 from common import get_env
 
-# This sets the root logger to write to stdout (your console).
-# Your script/app needs to call this somewhere at least once.
-logging.basicConfig()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("my_module")
 
 def stream_video_from_file(moviefile, topic, bootstrap_servers):
     logger.debug("streaming to kafka endpoint: {e}".format(e=bootstrap_servers))

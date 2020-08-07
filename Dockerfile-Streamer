@@ -10,7 +10,8 @@ RUN cd /usr/src/app \
 
 RUN mkdir /tmp/VideoAnalytics \
     && mkdir /tmp/VideoAnalytics/out \
-    && mkdir /tmp/VideoAnalytics/faces 
+    && mkdir /tmp/VideoAnalytics/faces \
+    && mkdir /tmp/logs
 
 CMD tail -f /dev/null
 

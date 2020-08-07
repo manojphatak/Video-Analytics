@@ -11,11 +11,13 @@ services:
      - /tmp/VideoAnalytics/out:/tmp/VideoAnalytics/out
      - /tmp/VideoAnalytics/faces:/tmp/VideoAnalytics/faces
      - /tmp/testdata:/tmp/testdata  # modifiy to suit your machine
+     - /tmp/logs:/tmp/logs
    
     environment:
       RUN_TESTS_INSIDE_CONTAINER: 1 
       KAFKA_CLIENT_BLOCKING_TIMEOUT: 6000  # milliseconds
       STREAMER_VIDEOFILE_FOR_TESTS: "/tmp/testdata/testvideo.webm"
+      LOGSDIR: "/tmp/logs"
           
     working_dir: /usr/src/app/Video-Analytics
     command: >
