@@ -57,7 +57,25 @@ autopep8 --in-place --aggressive --aggressive <filename>
 ```
 
 ## Feature Backlog
-- docker swarm
+
+### Refactoring
+- Run streamer & consumer from docker exec or entrypoint
+- Update readme
+- Type Safety in python code
+- Docker-compose should use environment variables to avoid repetation
+
+### Features
+- New lightweight app for streamer & consumer
+- Streamer should run as background task, consuming all available video files from given directory
+- Consumer should push the output in a different queue. It should not "match" faces, rather only "detect" faces & draw squares
+- Separate consumer to push detected faces to GoogleDrive or something like that
+- Separate streamer to consume direct camera feed
+
+### Scaling
+- Kafka Cluster with multiple nodes
+- Docker Swarm with scaling
+- Making Kafka Topic Persistent
+- Profiling
 
 ## Bugs
 - testdata is not getting copied from host to container
