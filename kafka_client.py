@@ -5,11 +5,9 @@ import logging
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
+from common import setup_logging
 
-
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("video_analytics")
 
 class KafkaCli:
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,
@@ -50,7 +48,7 @@ class KafkaCli:
     def register_consumer(self):
         self.consumer = KafkaConsumer(self.topic,
                                       auto_offset_reset='earliest',
-                                      enable_auto_commit=False,  # todo: this is temp. Make this to: True
+                                      enable_auto_commit=True,  # make this to False, if we want to consume from begining
                                       group_id='my-group-1',
                                       value_deserializer=self.value_deserializer,
                                       bootstrap_servers=self.bootstrap_servers,

@@ -6,20 +6,18 @@ import string
 import random
 import argparse
 import logging
+import logging.config
 from functools import reduce
 
 import face_recognition
 from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
+from common import get_env, setup_logging
 
-
-# This sets the root logger to write to stdout (your console).
-# Your script/app needs to call this somewhere at least once.
-logging.basicConfig()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+if __name__ == "__main__":
+    setup_logging()
+logger = logging.getLogger("video_analytics")
 
 @Pipe
 def tolist(iterable):
@@ -153,7 +151,7 @@ if __name__ == "__main__":
     kafkaCli = KafkaImageCli(
         bootstrap_servers=kafka_endpt,
         topic= args.kafkatopic,
-        stop_iteration_timeout=5000)
+        stop_iteration_timeout= get_env("KAFKA_CLIENT_BLOCKING_TIMEOUT", 5000,int))
 
     kafkaCli.register_consumer()
     matched_titles= consume_images_from_kafka(kafkaCli, 

@@ -1,14 +1,15 @@
 import unittest
 import os
 import logging
+import logging.config
 
 from kafka_client import KafkaImageCli
 import video_streamer
 from video_consumer import consume_images_from_kafka
+from common import get_env, setup_logging
 
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+setup_logging()
+logger = logging.getLogger("video_analytics")
 
 class TestVideoConsumer(unittest.TestCase):
     def test_detect_known_faces(self):
@@ -19,11 +20,12 @@ class TestVideoConsumer(unittest.TestCase):
         else:
             bootstrap_servers= ['localhost:9092']
         
-        videofile= "./testvideo.webm"
+        videofile= os.environ.get("STREAMER_VIDEOFILE_FOR_TESTS", "")
         kafkatopic= "tests"
         outdir= "/tmp/VideoAnalytics/out"
         facesDir= "/tmp/VideoAnalytics/faces"
 
+        assert os.path.exists(videofile), "file path does not exist! : " + videofile
         assert os.path.exists(outdir), "file path does not exist! : " + outdir
         assert os.path.exists(facesDir), "file path does not exist! : " + facesDir
 
@@ -32,7 +34,7 @@ class TestVideoConsumer(unittest.TestCase):
         kafkaCli = KafkaImageCli(
             bootstrap_servers=bootstrap_servers,
             topic=kafkatopic,
-            stop_iteration_timeout=3000)
+            stop_iteration_timeout= get_env("KAFKA_CLIENT_BLOCKING_TIMEOUT", 5000, int))
 
 
         kafkaCli.register_consumer()
@@ -42,7 +44,8 @@ class TestVideoConsumer(unittest.TestCase):
         print(matched_titles)
         #self.assertEqual(
         #    set(['Manoj_direct', 'Manoj_with_beard', 'Manoj_US_Visa']), matched_titles)
-
+        
 
 if __name__ == "__main__":
     unittest.main()
+    logging.shutdown()

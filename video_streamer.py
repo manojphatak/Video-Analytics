@@ -1,30 +1,31 @@
 import os
 import argparse
 import logging
+import logging.config
 
 import cv2
 
 from kafka_client import KafkaImageCli
+from common import get_env, setup_logging
 
-# This sets the root logger to write to stdout (your console).
-# Your script/app needs to call this somewhere at least once.
-logging.basicConfig()
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+if __name__ == "__main__":
+    setup_logging()
+logger = logging.getLogger("video_analytics")
 
 def stream_video_from_file(moviefile, topic, bootstrap_servers):
     logger.debug("streaming to kafka endpoint: {e}".format(e=bootstrap_servers))
-    kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, topic= topic, stop_iteration_timeout=3000)
+    kafkaCli = KafkaImageCli(bootstrap_servers= bootstrap_servers, 
+                             topic= topic,
+                             stop_iteration_timeout= get_env("KAFKA_CLIENT_BLOCKING_TIMEOUT", 3000,int))
     
-    assert os.path.exists(moviefile)
+    assert os.path.exists(moviefile), moviefile 
     video = cv2.VideoCapture(moviefile)
     
     totalframes= video.get(cv2.CAP_PROP_FRAME_COUNT)
     fps= video.get(cv2.CAP_PROP_FPS)
     frames_to_skip = fps * 10   # we are capturing aframe every minute
 
-    logger.info("---------- Summay ----------")
+    logger.info("---------- Video Summary ----------")
     logger.info("Total # of frames: {numframes}".format(numframes= totalframes))
     logger.info("fps: {fps}".format(fps= fps))
     logger.info("Frames to skip: {frames_to_skip}".format(frames_to_skip= frames_to_skip))

@@ -1,4 +1,5 @@
 pipe
+PyYAML
 kafka-python
 dlib
 opencv-python

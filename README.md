@@ -1,14 +1,14 @@
-## Video-Analytics
+# Video-Analytics
+
+[![Kafka](https://img.shields.io/badge/streaming_platform-kafka-black.svg?style=flat-square)](https://kafka.apache.org)
+[![Docker Images](https://img.shields.io/badge/docker_images-confluent-orange.svg?style=flat-square)](https://github.com/confluentinc/cp-docker-images)
+[![Python](https://img.shields.io/badge/python-3.5+-blue.svg?style=flat-square)](https://www.python.org)
+
 Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer analytics
 
 ## References
 - Face Detection library: https://ourcodeworld.com/articles/read/841/how-to-install-and-use-the-python-face-recognition-and-detection-library-in-ubuntu-16-04
 
-## Run linter & style checker
-```
-pip install autopep8
-autopep8 --in-place --aggressive --aggressive <filename>
-```
 
 ## Usage
 - Download YouTube Videos
@@ -50,6 +50,14 @@ Use "kafka:29092", if you are running scripts from within the docker container
 python3 tests.py   
 ```
 
+## Run linter & style checker
+```
+pip install autopep8
+autopep8 --in-place --aggressive --aggressive <filename>
+```
 
 ## Feature Backlog
 - docker swarm
+
+## Bugs
+- testdata is not getting copied from host to container
