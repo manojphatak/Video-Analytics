@@ -10,14 +10,14 @@ services:
      - .:/usr/src/app/Video-Analytics-local  #this is for testing the code before commit
      - /tmp/VideoAnalytics/out:/tmp/VideoAnalytics/out
      - /tmp/VideoAnalytics/faces:/tmp/VideoAnalytics/faces
-     - /tmp/testdata:/tmp/testdata  # modifiy to suit your machine
-     - /tmp/logs:/tmp/logs
+     - /tmp/VideoAnalytics/testdata:/tmp/VideoAnalytics/testdata  # modifiy to suit your machine
+     - /tmp/VideoAnalytics/logs:/tmp/VideoAnalytics/logs
    
     environment:
       RUN_TESTS_INSIDE_CONTAINER: 1 
       KAFKA_CLIENT_BLOCKING_TIMEOUT: 6000  # milliseconds
-      STREAMER_VIDEOFILE_FOR_TESTS: "/tmp/testdata/testvideo.webm"
-      LOGSDIR: "/tmp/logs"
+      STREAMER_VIDEOFILE_FOR_TESTS: "/tmp/VideoAnalytics/testdata/testvideo.webm"
+      LOGSDIR: "/tmp/VideoAnalytics/logs"
           
     working_dir: /usr/src/app/Video-Analytics
     command: >

@@ -6,15 +6,18 @@ import string
 import random
 import argparse
 import logging
+import logging.config
 from functools import reduce
 
 import face_recognition
 from pipe import Pipe, select, where
 
 from kafka_client import KafkaImageCli
-from common import get_env
+from common import get_env, setup_logging
 
-logger = logging.getLogger("my_module")
+if __name__ == "__main__":
+    setup_logging()
+logger = logging.getLogger("video_analytics")
 
 @Pipe
 def tolist(iterable):

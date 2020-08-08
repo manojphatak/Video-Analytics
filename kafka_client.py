@@ -5,8 +5,9 @@ import logging
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
+from common import setup_logging
 
-logger = logging.getLogger("my_module")
+logger = logging.getLogger("video_analytics")
 
 class KafkaCli:
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,
