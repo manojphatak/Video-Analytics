@@ -7,7 +7,7 @@ services:
     container_name: generator
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      TRANSACTIONS_TOPIC: queueing.transactions
+      TRANSACTIONS_TOPIC: queueing.raw-frames
       TRANSACTIONS_PER_SECOND: 1000
 
     volumes:
