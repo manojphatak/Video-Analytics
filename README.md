@@ -59,8 +59,8 @@ autopep8 --in-place --aggressive --aggressive <filename>
 ## Feature Backlog
 
 ### Refactoring
-- Run streamer & consumer from docker exec or entrypoint
-- Update readme
+>- Run streamer & consumer from docker exec or entrypoint 
+>- Update readme
 - Type Safety in python code
 - Docker-compose should use environment variables to avoid repetation
 
