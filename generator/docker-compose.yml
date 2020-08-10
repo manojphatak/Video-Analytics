@@ -4,6 +4,7 @@ services:
 
   generator:
     build: .
+    container_name: generator
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.transactions
