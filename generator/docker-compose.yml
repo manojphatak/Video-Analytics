@@ -5,7 +5,7 @@ services:
   generator:
     build: .
     environment:
-      KAFKA_BROKER_URL: broker:9092
+      KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.transactions
       TRANSACTIONS_PER_SECOND: 1000
 
