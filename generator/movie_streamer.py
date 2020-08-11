@@ -31,6 +31,7 @@ def get_movie_files() -> list:
 
 
 def read_movie(moviefile):
+    logger.debug(f"Reading movie file: {moviefile}")
     video = cv2.VideoCapture(moviefile)
     
     totalframes= video.get(cv2.CAP_PROP_FRAME_COUNT)
@@ -50,6 +51,9 @@ def read_movie(moviefile):
         if frameid % frames_to_skip: 
             continue
 
+        # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
+        frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
+
         ret, buffer = cv2.imencode('.jpg', frame)
         yield buffer
     video.release()  # Todo: Use Context Manager
@@ -62,10 +66,10 @@ def stream_movies():
                              stop_iteration_timeout= env["stop_iteration_timeout"])
 
     for movie in get_movie_files():
-        logger.debug(f"Reading movie file: {movie}")
         for frame in read_movie(movie):
-            logger.debug("sending frame to kafka topic")            
+            logger.debug("sending frame to kafka topic")       
             kafkaCli.send_message(frame.tobytes())
+    
     
 
 if __name__ == "__main__":

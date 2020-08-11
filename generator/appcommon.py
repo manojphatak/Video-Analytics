@@ -1,7 +1,9 @@
 import logging
+import time
 
 def init_logger(logname):
     #logging.basicConfig()
+    logging.Formatter.converter = time.localtime
     logger = logging.getLogger(logname)
     logger.setLevel(logging.DEBUG)
     stream_handler = logging.StreamHandler()
