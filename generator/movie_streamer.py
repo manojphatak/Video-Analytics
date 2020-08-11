@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import logging.config
+import time
 
 import cv2
 
@@ -29,12 +30,18 @@ def get_movie_files() -> list:
 
 def stream_movie_file():
     logger.debug(f"streaming to kafka endpoint: {env['kafka_endpt']}")
+    logger.debug("second line")
+    while True:
+        logger.debug("busy...")
+        time.sleep(3)
+        
     kafkaCli = KafkaImageCli(bootstrap_servers= [env["kafka_endpt"]], 
                              topic= env["topic"],
                              stop_iteration_timeout= env["stop_iteration_timeout"])
     for movie in get_movie_files():
         pass
-
+    
+        
 
 if __name__ == "__main__":
     print("inside movie_streamer...")

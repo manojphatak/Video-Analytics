@@ -11,7 +11,10 @@ services:
       TRANSACTIONS_PER_SECOND: 1000
 
     volumes:
-     - ..:/usr/app/sandbox  #this is for testing the code before commit  
+     - ..:/usr/app/sandbox  #this is for testing the code before commit
+    
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "movie_streamer.py"]
   
 
 networks:

@@ -28,6 +28,5 @@ WORKDIR /usr/app
 
 ADD ./requirements_handcrafted.txt ./
 RUN pip install -r requirements_handcrafted.txt
-ADD ./ ./
 
-CMD ["python3", "app.py"]
+
