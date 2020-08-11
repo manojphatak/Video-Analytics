@@ -10,18 +10,7 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
-from common import get_env, setup_logging
-
-
-def init_logger():
-    #logging.basicConfig()
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(logging.Formatter("%(asctime)s:[%(levelname)s]:%(message)s"))
-    stream_handler.setLevel(logging.DEBUG)
-    logger.addHandler(stream_handler)
-    return logger
+from generator.appcommon import init_logger
 
 
 def get_environ() -> dict:
@@ -66,7 +55,7 @@ def read_movie(moviefile):
     video.release()  # Todo: Use Context Manager
 
 
-def stream_movie_file():
+def stream_movies():
     logger.debug(f"streaming to kafka endpoint: {env['kafka_endpt']}")
     kafkaCli = KafkaImageCli(bootstrap_servers= [env["kafka_endpt"]], 
                              topic= env["topic"],
@@ -80,7 +69,7 @@ def stream_movie_file():
     
 
 if __name__ == "__main__":
-    logger = init_logger()
+    logger = init_logger(__file__)
     logger.debug("------------start: inside movie_streamer...----------------------------")
     env : dict = get_environ()
-    stream_movie_file()
+    stream_movies()
