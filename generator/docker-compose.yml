@@ -8,10 +8,13 @@ services:
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.raw-frames
-      TRANSACTIONS_PER_SECOND: 1000
+      FRAME_CAPTURE_PERIOD: 1  # Capture frame at every 'n' seconds
+      MOVIE_FILES_SOURCE: "/usr/app/movies"
+
 
     volumes:
      - ..:/usr/app/sandbox  #this is for testing the code before commit
+     - /tmp/VideoAnalytics/testdata:/usr/app/movies
     
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "movie_streamer.py"]
