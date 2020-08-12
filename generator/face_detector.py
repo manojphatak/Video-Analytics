@@ -20,22 +20,36 @@ def get_environ() -> dict:
     }
 
 
-def consume_kafka_topic():
-    kafkaCli = KafkaImageCli(
+def get_kafka_cli(clitype):
+    topic_mapping= {"producer": env["out_topic"], "consumer": env["in_topic"]} #todo: use enum instead of string
+    assert clitype in topic_mapping, "incorrect kafka client requested. It has to be either producer or consumer"
+    return KafkaImageCli(
         bootstrap_servers= [env["kafka_endpt"]],
-        topic= env["in_topic"],
+        topic= topic_mapping[clitype],
         stop_iteration_timeout= sys.maxsize
-        )
-    kafkaCli.register_consumer()
-    logger.debug("polling kafka topic now...")
-    for m in kafkaCli.consumer:
-        logger.debug("received message from Kafka")
-        tempjpg = save_image_data_to_jpg(m.value, "/tmp")
-        image = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
-        face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
-        if not face_encodings:
-            os.remove(tempjpg)  # remove the jpg, since it doesn't contain any faces
+    )
 
+
+def detect_face(imagedata):
+    tempjpg = save_image_data_to_jpg(imagedata, "/tmp")
+    image = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
+    face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
+    #os.remove(tempjpg)
+    return face_encodings
+
+
+def consume_kafka_topic():
+    kafkaConsumer = get_kafka_cli("consumer")
+    kafkaConsumer.register_consumer()
+    logger.debug("polling kafka topic now...")
+    kafkaProducer = get_kafka_cli("producer")
+
+    for m in kafkaConsumer.consumer:
+        logger.debug("received message from Kafka")
+        face_encodings= detect_face(m.value)
+        if face_encodings:
+            kafkaProducer.send_message(m.value)   
+        
 
 if __name__== "__main__":
     logger = init_logger(__file__)
