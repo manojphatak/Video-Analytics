@@ -4,6 +4,7 @@ import logging
 
 import cv2
 import face_recognition
+import pbjson
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
@@ -38,6 +39,15 @@ def detect_face(imagedata):
     return face_encodings
 
 
+def create_out_msg(imagedata):
+    msg= {
+        "id": 123,
+        "name": "abc",
+        "imagedata": imagedata
+    }
+    return pbjson.dumps(msg)
+
+
 def consume_kafka_topic():
     kafkaConsumer = get_kafka_cli("consumer")
     kafkaConsumer.register_consumer()
@@ -48,7 +58,8 @@ def consume_kafka_topic():
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
         if face_encodings:
-            kafkaProducer.send_message(m.value)   
+            outmsg= create_out_msg(m.value)
+            kafkaProducer.send_message(outmsg)   
         
 
 if __name__== "__main__":

@@ -6,3 +6,4 @@ opencv-python
 opencv-contrib-python
 face-recognition
 face-recognition-models
+pbjson
