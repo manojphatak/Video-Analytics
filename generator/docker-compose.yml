@@ -2,21 +2,19 @@ version: '3'
 
 services:
 
-  generator:
+  movie-feeder:
     build: .
-    container_name: generator
+    container_name: movie-feeder
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.raw-frames
       FRAME_CAPTURE_PERIOD: 1  # Capture frame at every 'n' seconds
       MOVIE_FILES_SOURCE: "/usr/app/movies"
 
-
     volumes:
      - ..:/usr/app/sandbox  #this is for testing the code before commit
      - /tmp/VideoAnalytics/testdata:/usr/app/movies
-    
-    working_dir: /usr/app/sandbox/generator
+    working_dir: /usr/app/sandbox/movie-feeder
     entrypoint: ["python3", "movie_streamer.py"]
   
 
