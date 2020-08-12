@@ -32,6 +32,21 @@ services:
     entrypoint: ["python3", "face_detector.py"]  
 
 
+  face-matcher:
+    build: .
+    container_name: face-matcher
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: transactions.faces
+      OUTPUT_TOPIC: transactions.matched-faces
+      FACE_DATABASE: /tmp
+    volumes:
+      - ..:/usr/app/sandbox  #this is for testing the code before commit    
+      - /tmp/faces:/tmp/faces  
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "face_matcher.py"]    
+
+
   filesystem-consumer:
     build: .
     container_name: filesystem-consumer
