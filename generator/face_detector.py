@@ -1,8 +1,6 @@
 import os
 import sys
 import logging
-import random
-import string
 
 import cv2
 import face_recognition
@@ -11,7 +9,7 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
-from generator.appcommon import init_logger
+from generator.appcommon import init_logger, save_image_data_to_jpg
 
 
 def get_environ() -> dict:
@@ -20,19 +18,6 @@ def get_environ() -> dict:
         "in_topic": os.environ.get("INPUT_TOPIC", ""),
         "out_topic": os.environ.get("OUTPUT_TOPIC", ""),
     }
-
-
-def save_image_data_to_jpg(imagedata, outpath):
-    def get_random_filename():
-        letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
-        fname = "".join(letters)
-        return "{fname}.jpg".format(fname= fname)
-
-    assert os.path.exists(outpath)
-    tempjpg = os.path.join(outpath, get_random_filename())
-    with open(tempjpg, "wb") as f:
-        f.write(imagedata)
-    return tempjpg    
 
 
 def consume_kafka_topic():
@@ -46,6 +31,10 @@ def consume_kafka_topic():
     for m in kafkaCli.consumer:
         logger.debug("received message from Kafka")
         tempjpg = save_image_data_to_jpg(m.value, "/tmp")
+        image = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
+        face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
+        if not face_encodings:
+            os.remove(tempjpg)  # remove the jpg, since it doesn't contain any faces
 
 
 if __name__== "__main__":

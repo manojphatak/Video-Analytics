@@ -1,5 +1,9 @@
 import logging
+import os
 import time
+import random
+import string
+
 
 def init_logger(logname):
     #logging.basicConfig()
@@ -11,3 +15,16 @@ def init_logger(logname):
     stream_handler.setLevel(logging.DEBUG)
     logger.addHandler(stream_handler)
     return logger
+
+
+def save_image_data_to_jpg(imagedata, outpath):
+    def get_random_filename():
+        letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
+        fname = "".join(letters)
+        return "{fname}.jpg".format(fname= fname)
+
+    assert os.path.exists(outpath)
+    tempjpg = os.path.join(outpath, get_random_filename())
+    with open(tempjpg, "wb") as f:
+        f.write(imagedata)
+    return tempjpg        
