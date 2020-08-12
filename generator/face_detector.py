@@ -39,10 +39,11 @@ def detect_face(imagedata):
     return face_encodings
 
 
-def create_out_msg(imagedata):
+def create_out_msg(imagedata, encod):
     msg= {
-        "id": 123,
-        "name": "abc",
+        "id": encod.data.tobytes(),    # hash of the encoding matrix: to serve as primary key
+        "someint": 123,
+        "somestring": "abc",
         "imagedata": imagedata
     }
     return pbjson.dumps(msg)
@@ -57,8 +58,8 @@ def consume_kafka_topic():
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
-        if face_encodings:
-            outmsg= create_out_msg(m.value)
+        for encod in face_encodings:
+            outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
         
 
