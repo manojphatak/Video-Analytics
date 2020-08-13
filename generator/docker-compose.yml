@@ -53,13 +53,13 @@ services:
     container_name: filesystem-consumer
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.faces
+      INPUT_TOPIC: transactions.matched-faces
       OUTPUT_FILE_LOCATION: /tmp
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
       - /tmp/todelete/filesystem-consumer:/tmp  # transient output. #TODO: to be removed
     working_dir: /usr/app/sandbox/generator
-    #entrypoint: ["python3", "filesystem_consumer.py"]  
+    entrypoint: ["python3", "filesystem_consumer.py"]  
     
 
 

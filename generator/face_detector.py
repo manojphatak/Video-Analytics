@@ -61,7 +61,6 @@ def consume_kafka_topic():
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
         for encod in face_encodings:
-            logger.debug(f"type of encod is: {type(encod)}")
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
         

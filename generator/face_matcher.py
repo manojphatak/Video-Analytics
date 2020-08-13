@@ -93,10 +93,14 @@ def consume_kafka_topic():
         matches= match_faces(new_face, known_faces, env["match_tol"])
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
-            logger.debug(f"matches: {titles}")
-        else:
-            logger.debug("No Matches")
-    logger.debug("ending kafka polling...")
+            new_face["matches"]= titles
+            outmsg= pickle.dumps(new_face)
+            _ = pickle.loads(outmsg)
+            logger.debug(f"diagnostic check: {_.keys()}")
+            logger.debug(f"matches: {_['matches']}")
+            kafkaProducer.send_message(outmsg)   
+            
+    logger.debug("ended kafka polling...")
 
 
 

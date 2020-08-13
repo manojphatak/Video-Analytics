@@ -9,7 +9,6 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaImageCli
 from generator.appcommon import init_logger, save_image_data_to_jpg
 
-#import pbjson
 
 def get_environ() -> dict:
     return {
@@ -35,10 +34,13 @@ def consume_kafka_topic():
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         data = pickle.loads(m.value)
-        logger.debug("Recovering data...")
-        logger.debug(f"someint: {data['someint']}")
-        save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])
+        logger.debug(f"recovered data: {data.keys()}")
 
+        save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])
+        
+        matches= data["matches"]
+        logger.debug(f"matches: {matches}")
+        
 
 if __name__== "__main__":
     logger = init_logger(__file__)
