@@ -1,5 +1,7 @@
 version: '3'
 
+# Note: Be sure to setup the env variable "VIDEO_ANALYTICS_DATA" pointing to host file system
+
 services:
 
   movie-feeder:
@@ -8,12 +10,12 @@ services:
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.raw-frames
-      FRAME_CAPTURE_PERIOD: 1  # Capture frame at every 'n' seconds
+      FRAME_CAPTURE_PERIOD: 1                           # Capture frame at every 'n' seconds
       MOVIE_FILES_SOURCE: "/usr/app/movies"
 
     volumes:
-     - ..:/usr/app/sandbox  #this is for testing the code before commit
-     - /tmp/VideoAnalytics/testdata:/usr/app/movies
+     - ..:/usr/app/sandbox                              # this is for testing the code before commit
+     - ${VIDEO_ANALYTICS_DATA}/movies:/usr/app/movies
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "movie_streamer.py"]
   
@@ -27,7 +29,7 @@ services:
       OUTPUT_TOPIC: transactions.faces
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
-      - /tmp/todelete:/tmp  # transient output. #TODO: to be removed
+      - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp  # transient output. #TODO: to be removed
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "face_detector.py"]  
 
@@ -43,7 +45,7 @@ services:
       FACE_MATCH_TOL: 0.6
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit    
-      - /tmp/faces:/tmp/faces  
+      - ${VIDEO_ANALYTICS_DATA}/known-faces:/tmp/faces  
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "face_matcher.py"]    
 
@@ -57,7 +59,7 @@ services:
       OUTPUT_FILE_LOCATION: /tmp
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
-      - /tmp/todelete/filesystem-consumer:/tmp  # transient output. #TODO: to be removed
+      - ${VIDEO_ANALYTICS_DATA}/output:/tmp  
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "filesystem_consumer.py"]  
     
