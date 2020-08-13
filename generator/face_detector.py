@@ -1,10 +1,11 @@
 import os
 import sys
 import logging
+import pickle
 
 import cv2
 import face_recognition
-import pbjson
+#import pbjson
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
@@ -44,9 +45,10 @@ def create_out_msg(imagedata, encod):
         "id": encod.data.tobytes(),    # hash of the encoding matrix: to serve as primary key
         "someint": 123,
         "somestring": "abc",
-        "imagedata": imagedata
+        "imagedata": imagedata,
+        "encod": encod,
     }
-    return pbjson.dumps(msg)
+    return pickle.dumps(msg)
 
 
 def consume_kafka_topic():
@@ -59,6 +61,7 @@ def consume_kafka_topic():
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
         for encod in face_encodings:
+            logger.debug(f"type of encod is: {type(encod)}")
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
         

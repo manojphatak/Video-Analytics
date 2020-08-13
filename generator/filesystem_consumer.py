@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import pickle
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
@@ -8,7 +9,7 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaImageCli
 from generator.appcommon import init_logger, save_image_data_to_jpg
 
-import pbjson
+#import pbjson
 
 def get_environ() -> dict:
     return {
@@ -33,7 +34,7 @@ def consume_kafka_topic():
 
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
-        data = pbjson.loads(m.value)
+        data = pickle.loads(m.value)
         logger.debug("Recovering data...")
         logger.debug(f"someint: {data['someint']}")
         save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])

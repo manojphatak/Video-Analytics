@@ -39,7 +39,8 @@ services:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: transactions.faces
       OUTPUT_TOPIC: transactions.matched-faces
-      FACE_DATABASE: /tmp
+      FACE_DATABASE: /tmp/faces
+      FACE_MATCH_TOL: 0.6
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit    
       - /tmp/faces:/tmp/faces  
@@ -58,9 +59,8 @@ services:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
       - /tmp/todelete/filesystem-consumer:/tmp  # transient output. #TODO: to be removed
     working_dir: /usr/app/sandbox/generator
-    entrypoint: ["python3", "filesystem_consumer.py"]  
-
-
+    #entrypoint: ["python3", "filesystem_consumer.py"]  
+    
 
 
 networks:
