@@ -79,3 +79,6 @@ autopep8 --in-place --aggressive --aggressive <filename>
 
 ## Bugs
 - testdata is not getting copied from host to container
+
+## Training Resources
+- Working with Kafka: https://florimond.dev/blog/articles/2018/09/building-a-streaming-fraud-detection-system-with-kafka-and-python/ (Example on Streaming Fraud Detection System)
