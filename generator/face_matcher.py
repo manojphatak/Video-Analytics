@@ -94,11 +94,13 @@ def consume_kafka_topic():
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
             new_face["matches"]= titles
+            logger.debug(f"match found: {titles}")
             outmsg= pickle.dumps(new_face)
-            _ = pickle.loads(outmsg)
-            logger.debug(f"diagnostic check: {_.keys()}")
-            logger.debug(f"matches: {_['matches']}")
             kafkaProducer.send_message(outmsg)   
+        else:
+            logger.debug("New face found. Updating the database...")
+            save_image_data_to_jpg(new_face["imagedata"], outpath= env["face_database"])
+            known_faces = load_known_faces(env["face_database"])
             
     logger.debug("ended kafka polling...")
 

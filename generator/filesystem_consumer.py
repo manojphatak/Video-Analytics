@@ -31,20 +31,22 @@ def consume_kafka_topic():
     kafkaConsumer.register_consumer()
     logger.debug("polling kafka topic now...")
 
+    discovered= set([])
+
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         data = pickle.loads(m.value)
-        logger.debug(f"recovered data: {data.keys()}")
+        
+        matches= set(data["matches"])
+        if matches.difference(discovered):     # new matches discovered    
+            discovered = discovered.union(set(matches))
+            save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])  # save this image somewhere for ref
+            logger.debug(f"discovered so far... {discovered}")
 
-        save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])
-        
-        matches= data["matches"]
-        logger.debug(f"matches: {matches}")
-        
 
 if __name__== "__main__":
     logger = init_logger(__file__)
-    logger.debug("------------start: inside face_detector...----------------------------")
+    logger.debug("------------start: inside filesystem-consumer...----------------------------")
     env = get_environ()
     consume_kafka_topic()
     
