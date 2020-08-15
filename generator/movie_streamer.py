@@ -69,6 +69,7 @@ def stream_movies():
         for frame in read_movie(movie):
             logger.debug("sending frame to kafka topic")       
             kafkaCli.send_message(frame.tobytes())
+    logger.debug("---------------- Done!!! --------------------")
     
     
 
