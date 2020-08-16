@@ -19,7 +19,7 @@ def get_environ() -> dict:
         "topic": os.environ.get("TRANSACTIONS_TOPIC", ""),
         "stop_iteration_timeout": int(os.environ.get("KAFKA_CLIENT_BLOCKING_TIMEOUT", 3000)),
         "movie_source": os.environ.get("MOVIE_FILES_SOURCE", ""),
-        "frame_cap_period": int(os.environ.get("FRAME_CAPTURE_PERIOD", "")),
+        "frame_cap_period": float(os.environ.get("FRAME_CAPTURE_PERIOD", "")),
     }
 
 
@@ -40,7 +40,8 @@ def read_movie(moviefile):
     logger.debug(f"fps: {fps}")
     logger.debug(f"Capturing frame every {env['frame_cap_period']} seconds")
 
-    frames_to_skip = fps * env["frame_cap_period"]
+    frames_to_skip = int(fps * env["frame_cap_period"])
+    logger.debug(f"frames to skip: {frames_to_skip}")
     frameid = -1
     while(video.isOpened()):
         success, frame = video.read()
@@ -50,6 +51,8 @@ def read_movie(moviefile):
         frameid += 1 
         if frameid % frames_to_skip: 
             continue
+
+        logger.debug(f"got frame id# {frameid} of {totalframes}, at approx {int(frameid/fps)} secs")    
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
@@ -65,11 +68,13 @@ def stream_movies():
                              topic= env["topic"],
                              stop_iteration_timeout= env["stop_iteration_timeout"])
 
+    st_time = time.time()
     for movie in get_movie_files():
         for frame in read_movie(movie):
-            logger.debug("sending frame to kafka topic")       
+            #logger.debug("sending frame to kafka topic")       
             kafkaCli.send_message(frame.tobytes())
-    logger.debug("---------------- Done!!! --------------------")
+    end_time = time.time()
+    logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
     
     
 
