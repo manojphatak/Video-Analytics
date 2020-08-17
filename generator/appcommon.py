@@ -17,11 +17,11 @@ def init_logger(logname):
     return logger
 
 
-def save_image_data_to_jpg(imagedata, outpath):
+def save_image_data_to_jpg(imagedata, outpath, prefix= ""):
     def get_random_filename():
         letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
         fname = "".join(letters)
-        return "{fname}.jpg".format(fname= fname)
+        return f"{prefix}_{fname}.jpg"
 
     assert os.path.exists(outpath)
     tempjpg = os.path.join(outpath, get_random_filename())

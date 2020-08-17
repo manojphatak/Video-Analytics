@@ -61,8 +61,13 @@ def consume_kafka_topic():
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
         for encod in face_encodings:
+            logger.debug("detected a face... sending to kafka topic...")
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
+
+        if not face_encodings:
+            logger.debug("motion detected, but not face. saving it to file...")
+            save_image_data_to_jpg(m.value, "/tmp", prefix= "MotionDetect")    
         
 
 if __name__== "__main__":

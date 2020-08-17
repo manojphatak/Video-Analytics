@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import pickle
+import datetime
 
 import cv2
 import imutils
@@ -14,6 +15,7 @@ from kafka_client import KafkaImageCli
 from generator.appcommon import init_logger, save_image_data_to_jpg
 
 firstFrame = None
+min_area = 500
 
 def get_environ() -> dict:
     return {
@@ -63,7 +65,20 @@ def detect_motion(imagedata):
     cnts = imutils.grab_contours(cnts)
     for c in cnts:
         logger.debug("got the contour")
-    
+        # if the contour is too small, ignore it
+        if cv2.contourArea(c) < min_area:
+            continue
+        # compute the bounding box for the contour, draw it on the frame,
+		# and update the text
+        (x, y, w, h) = cv2.boundingRect(c)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        text = "Occupied"
+
+    if cnts:
+        return True
+    else:
+        return False
+        
 
 
 def consume_kafka_topic():
@@ -74,7 +89,10 @@ def consume_kafka_topic():
 
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
-        detect_motion(m.value)
+        frame = detect_motion(m.value)
+        if frame:
+            logger.debug("detected motion. Sending output to kafka...")
+            kafkaProducer.send_message(m.value)
         
 
 if __name__== "__main__":

@@ -33,19 +33,19 @@ services:
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "motion_detector.py"]  
 
-    
+
   face-detector:
     build: .
     container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: queueing.raw-frames
+      INPUT_TOPIC: transactions.motion
       OUTPUT_TOPIC: transactions.faces
     volumes:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
       - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp  # transient output. #TODO: to be removed
     working_dir: /usr/app/sandbox/generator
-    #entrypoint: ["python3", "face_detector.py"]  
+    entrypoint: ["python3", "face_detector.py"]  
 
 
   face-matcher:
@@ -61,7 +61,7 @@ services:
       - ..:/usr/app/sandbox  #this is for testing the code before commit    
       - ${VIDEO_ANALYTICS_DATA}/known-faces:/tmp/faces  
     working_dir: /usr/app/sandbox/generator
-    #entrypoint: ["python3", "face_matcher.py"]    
+    entrypoint: ["python3", "face_matcher.py"]    
 
 
   filesystem-consumer:
@@ -75,7 +75,7 @@ services:
       - ..:/usr/app/sandbox  #this is for testing the code before commit  
       - ${VIDEO_ANALYTICS_DATA}/output:/tmp  
     working_dir: /usr/app/sandbox/generator
-    #entrypoint: ["python3", "filesystem_consumer.py"]  
+    entrypoint: ["python3", "filesystem_consumer.py"]  
     
 
 
