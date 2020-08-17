@@ -1,0 +1,71 @@
+version: '3'
+
+# Note: Be sure to setup the env variable "VIDEO_ANALYTICS_DATA" pointing to host file system
+
+services:
+
+  movie-feeder:
+    build: .
+    container_name: movie-feeder
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      TRANSACTIONS_TOPIC: queueing.raw-frames
+      FRAME_CAPTURE_PERIOD: 1                           # Capture frame at every 'n' seconds
+      MOVIE_FILES_SOURCE: "/usr/app/movies"
+
+    volumes:
+     - ..:/usr/app/sandbox                              # this is for testing the code before commit
+     - ${VIDEO_ANALYTICS_DATA}/movies:/usr/app/movies
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "movie_streamer.py"]
+  
+
+  face-detector:
+    build: .
+    container_name: face-detector
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: queueing.raw-frames
+      OUTPUT_TOPIC: transactions.faces
+    volumes:
+      - ..:/usr/app/sandbox  #this is for testing the code before commit  
+      - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp  # transient output. #TODO: to be removed
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "face_detector.py"]  
+
+
+  face-matcher:
+    build: .
+    container_name: face-matcher
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: transactions.faces
+      OUTPUT_TOPIC: transactions.matched-faces
+      FACE_DATABASE: /tmp/faces
+      FACE_MATCH_TOL: 0.6
+    volumes:
+      - ..:/usr/app/sandbox  #this is for testing the code before commit    
+      - ${VIDEO_ANALYTICS_DATA}/known-faces:/tmp/faces  
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "face_matcher.py"]    
+
+
+  filesystem-consumer:
+    build: .
+    container_name: filesystem-consumer
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: transactions.matched-faces
+      OUTPUT_FILE_LOCATION: /tmp
+    volumes:
+      - ..:/usr/app/sandbox  #this is for testing the code before commit  
+      - ${VIDEO_ANALYTICS_DATA}/output:/tmp  
+    working_dir: /usr/app/sandbox/generator
+    entrypoint: ["python3", "filesystem_consumer.py"]  
+    
+
+
+networks:
+  default:
+    external:
+      name: kafka-network
