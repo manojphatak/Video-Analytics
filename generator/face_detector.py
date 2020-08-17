@@ -36,7 +36,7 @@ def detect_face(imagedata):
     tempjpg = save_image_data_to_jpg(imagedata, "/tmp")
     image = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
     face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
-    #os.remove(tempjpg)
+    os.remove(tempjpg)
     return face_encodings
 
 
