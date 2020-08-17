@@ -29,4 +29,7 @@ WORKDIR /usr/app
 ADD ./requirements_handcrafted.txt ./
 RUN pip install -r requirements_handcrafted.txt
 
+# todo: merge with requirements.txt
+RUN pip install imutils    
+
 
