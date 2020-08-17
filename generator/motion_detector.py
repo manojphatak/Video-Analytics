@@ -3,6 +3,8 @@ import sys
 import logging
 import pickle
 import datetime
+import random
+import string
 
 import cv2
 import imutils
@@ -74,6 +76,13 @@ def detect_motion(imagedata):
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         text = "Occupied"
 
+    def get_random_filename(prefix):
+        letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
+        fname = "".join(letters)
+        return f"{prefix}_{fname}.jpg"
+
+    outfile= os.path.join("/tmp", get_random_filename(prefix= "motion"))
+    cv2.imwrite(outfile,frame)
     if cnts:
         return True
     else:
