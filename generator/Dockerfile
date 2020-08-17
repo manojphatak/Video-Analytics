@@ -32,4 +32,6 @@ RUN pip install -r requirements_handcrafted.txt
 # todo: merge with requirements.txt
 RUN pip install imutils    
 
+mkdir /usr/app/temp
+mkdir /usr/app/out
 

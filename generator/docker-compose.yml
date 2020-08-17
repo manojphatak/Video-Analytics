@@ -29,7 +29,8 @@ services:
       OUTPUT_TOPIC: transactions.motion
     volumes:
       - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp
+      - ${VIDEO_ANALYTICS_DATA}/transient-data:/usr/app/temp
+      - ${VIDEO_ANALYTICS_DATA}/output:/usr/app/out
     working_dir: /usr/app/sandbox/generator
     entrypoint: ["python3", "motion_detector.py"]  
 
