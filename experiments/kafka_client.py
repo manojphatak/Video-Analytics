@@ -5,6 +5,7 @@ import logging
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
+from common import setup_logging
 
 logger = logging.getLogger("video_analytics")
 
