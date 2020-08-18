@@ -7,7 +7,7 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
-from generator.appcommon import init_logger, save_image_data_to_jpg
+from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
 
 
 def get_environ() -> dict:
