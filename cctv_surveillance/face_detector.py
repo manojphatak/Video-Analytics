@@ -5,13 +5,13 @@ import pickle
 
 import cv2
 import face_recognition
-#import pbjson
+
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
-from generator.appcommon import init_logger, save_image_data_to_jpg
+from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
 
 
 def get_environ() -> dict:
@@ -36,7 +36,7 @@ def detect_face(imagedata):
     tempjpg = save_image_data_to_jpg(imagedata, "/tmp")
     image = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
     face_encodings = face_recognition.face_encodings(image)  # get encodings for all detected faces
-    #os.remove(tempjpg)
+    os.remove(tempjpg)
     return face_encodings
 
 
@@ -61,8 +61,13 @@ def consume_kafka_topic():
         logger.debug("received message from Kafka")
         face_encodings= detect_face(m.value)
         for encod in face_encodings:
+            logger.debug("detected a face... sending to kafka topic...")
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
+
+        # if not face_encodings:
+        #     logger.debug("motion detected, but not face. saving it to file...")
+        #     save_image_data_to_jpg(m.value, "/tmp", prefix= "MotionDetect")    
         
 
 if __name__== "__main__":
