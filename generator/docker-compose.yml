@@ -10,7 +10,7 @@ services:
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: queueing.raw-frames
-      FRAME_CAPTURE_PERIOD: 1                           # Capture frame at every 'n' seconds
+      FRAME_CAPTURE_PERIOD: 5                           # Capture frame at every 'n' seconds
       MOVIE_FILES_SOURCE: "/usr/app/movies"
 
     volumes:

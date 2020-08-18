@@ -16,7 +16,7 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaImageCli
 from generator.appcommon import init_logger, save_image_data_to_jpg
 
-#firstFrame = None
+#todo: move following variables to docker-compose as env
 avg = None
 min_area = 12000
 delta_thresh = 5
@@ -41,7 +41,10 @@ def get_kafka_cli(clitype):
 
 
 def detect_motion(imagedata):
-    tempjpg = save_image_data_to_jpg(imagedata, "/usr/app/temp")
+    detect_motion.frame_id += 1
+    logger.debug(f"working on frame: {detect_motion.frame_id}")
+
+    tempjpg = save_image_data_to_jpg(imagedata, "/usr/app/temp")  #todo: remove hardcoded path
     frame = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
     os.remove(tempjpg)
 
@@ -49,13 +52,6 @@ def detect_motion(imagedata):
     frame = imutils.resize(frame, width=500)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     #gray = cv2.GaussianBlur(gray, (21, 21), 0)
-
-	# # if the first frame is None, initialize it
-    # global firstFrame
-    # if firstFrame is None:
-    #     firstFrame = gray
-    #     logger.debug("grabbed the firstframe")
-    #     return
 
     # if the average frame is None, initialize it
     global avg
@@ -89,19 +85,18 @@ def detect_motion(imagedata):
         
         if contour_area > max_contour_area:
             max_contour_area = contour_area
-        if max_contour_area < min_area:
-            return False
-
+        
         # compute the bounding box for the contour, draw it on the frame,
 		# and update the text
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        text = "Occupied"
+        
 
+    if max_contour_area < min_area:
+        return False
 
-    if cnts:
-        logger.debug(f"detected # of contours: {len(cnts)}")
-        fname = f"motion_{str(len(cnts))}_{str(max_contour_area)}.jpg"
+    if len(cnts) > 0:
+        fname = f"{detect_motion.frame_id}_{str(len(cnts))}_{str(max_contour_area)}.jpg"
         outfile= os.path.join("/usr/app/out", fname)   #todo: use env instead of hardcoded path
         cv2.imwrite(outfile,frame)
         return True
@@ -116,15 +111,10 @@ def consume_kafka_topic():
     logger.debug("polling kafka topic now...")
     kafkaProducer = get_kafka_cli("producer")
 
-    numframes= 0
+    detect_motion.frame_id= 0   # initalizing function static variable
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
-        numframes += 1
-        # while numframes < num_initial_frames_to_discard:
-        #     continue
-
         frame = detect_motion(m.value)
-        logger.debug(f"working on frame # {numframes}")
         if frame:
             logger.debug("detected motion. Sending output to kafka...")
             kafkaProducer.send_message(m.value)
