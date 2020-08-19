@@ -13,11 +13,11 @@
 Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer analytics
 
 ## Goals 
-Intent of this project is to build a Minimalistic, Horizontally Scalable, Distributed system to churn out volumes of data & provide meaningful insights into the same.
+Intent of this project is to build a **Minimalistic**, **Horizontally Scalable**, **Distributed** system to churn out volumes of data & provide meaningful insights into the same.
 The use case we are pursuing is that of churning Computer Vision data e.g. CCTV footage, You tube videos or images.
 
 ##  Why this project?
-One can find numerous solutions for solving problems related to Computer Vision & data analytics in-general. However, most of these solutions are either in the form of "technology" (e.g. training a good face recognition model) or "full blown product".
+One can find numerous solutions for solving problems related to Computer Vision & data analytics in-general. However, most of these solutions are either in the form of "*technology*" (e.g. training a good face recognition model) or "*full blown product*".
 We do not want to re-invent the wheel. This project intends to build a minimalistic product that is usable, as well as can act as starting code for building a more complex product.
 
 ## Code Organisation
