@@ -44,8 +44,6 @@ def detect_face(imagedata):
 def create_out_msg(imagedata, encod):
     framedata = FrameData(
                     id = encod.data.tobytes(), # hash of the encoding matrix: to serve as primary key
-                    someint = 123,
-                    somestring = "abc",
                     imagedata = imagedata,
                     encod = encod
                 )
