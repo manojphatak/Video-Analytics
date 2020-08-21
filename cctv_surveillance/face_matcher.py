@@ -13,6 +13,7 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from framedata import FrameData, translate_old_to_new, translate_new_to_old
 
 @Pipe
 def tolist(iterable):
@@ -90,11 +91,14 @@ def consume_kafka_topic():
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         new_face = pickle.loads(m.value)
+        new_face = translate_new_to_old(new_face)
         matches= match_faces(new_face, known_faces, env["match_tol"])
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
             new_face["matches"]= titles
             logger.debug(f"match found: {titles}")
+
+            new_face = translate_old_to_new(new_face)
             outmsg= pickle.dumps(new_face)
             kafkaProducer.send_message(outmsg)   
         else:

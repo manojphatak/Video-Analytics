@@ -12,6 +12,7 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from framedata import FrameData, translate_old_to_new
 
 
 def get_environ() -> dict:
@@ -48,7 +49,8 @@ def create_out_msg(imagedata, encod):
         "imagedata": imagedata,
         "encod": encod,
     }
-    return pickle.dumps(msg)
+    frameData = translate_old_to_new(msg)
+    return pickle.dumps(frameData)
 
 
 def consume_kafka_topic():
@@ -65,9 +67,6 @@ def consume_kafka_topic():
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
 
-        # if not face_encodings:
-        #     logger.debug("motion detected, but not face. saving it to file...")
-        #     save_image_data_to_jpg(m.value, "/tmp", prefix= "MotionDetect")    
         
 
 if __name__== "__main__":
