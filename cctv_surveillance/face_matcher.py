@@ -100,7 +100,7 @@ def consume_kafka_topic():
             kafkaProducer.send_message(outmsg)   
         else:
             logger.debug("New face found. Updating the database...")
-            save_image_data_to_jpg(new_face["imagedata"], outpath= env["face_database"])
+            save_image_data_to_jpg(new_face.imagedata, outpath= env["face_database"])
             known_faces = load_known_faces(env["face_database"])
             
     logger.debug("ended kafka polling...")

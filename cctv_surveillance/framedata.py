@@ -1,4 +1,5 @@
 import numpy
+from typing import List
 
 class FrameData:
     def __init__(self, id, someint, somestring, imagedata, encod, matches=[]):
@@ -7,5 +8,5 @@ class FrameData:
         self.somestring: str = somestring
         self.imagedata: bytes = imagedata
         self.encod: numpy.ndarray = encod
-        self.matches = matches
+        self.matches: List[str]  = matches
 
