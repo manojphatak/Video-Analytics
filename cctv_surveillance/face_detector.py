@@ -12,7 +12,7 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData, translate_old_to_new
+from framedata import FrameData
 
 
 def get_environ() -> dict:
@@ -42,15 +42,14 @@ def detect_face(imagedata):
 
 
 def create_out_msg(imagedata, encod):
-    msg= {
-        "id": encod.data.tobytes(),    # hash of the encoding matrix: to serve as primary key
-        "someint": 123,
-        "somestring": "abc",
-        "imagedata": imagedata,
-        "encod": encod,
-    }
-    frameData = translate_old_to_new(msg)
-    return pickle.dumps(frameData)
+    framedata = FrameData(
+                    id = encod.data.tobytes(), # hash of the encoding matrix: to serve as primary key
+                    someint = 123,
+                    somestring = "abc",
+                    imagedata = imagedata,
+                    encod = encod
+                )
+    return pickle.dumps(framedata)
 
 
 def consume_kafka_topic():
@@ -66,7 +65,6 @@ def consume_kafka_topic():
             logger.debug("detected a face... sending to kafka topic...")
             outmsg= create_out_msg(m.value, encod)
             kafkaProducer.send_message(outmsg)   
-
         
 
 if __name__== "__main__":

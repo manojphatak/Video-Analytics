@@ -1,35 +1,11 @@
 import numpy
 
 class FrameData:
-    def __init__(self):
-        self.id : bytes
-        self.someint: int
-        self.somestring: str
-        self.imagedata: bytes
-        self.encod: numpy.ndarray 
-        self.matches = []
+    def __init__(self, id, someint, somestring, imagedata, encod, matches=[]):
+        self.id : bytes = id
+        self.someint: int = someint
+        self.somestring: str = somestring
+        self.imagedata: bytes = imagedata
+        self.encod: numpy.ndarray = encod
+        self.matches = matches
 
-
-def translate_old_to_new(olddata):
-    newdata = FrameData()        
-    newdata.id = olddata["id"]
-    newdata.someint = olddata["someint"]
-    newdata.somestring = olddata["somestring"]
-    newdata.imagedata = olddata["imagedata"]
-    newdata.encod = olddata["encod"]
-    if "matches" in olddata:
-        newdata.matches = olddata["matches"]
-    else:
-        newdata.matches = []
-    return newdata
-
-
-def translate_new_to_old(newdata):
-    return {
-        "id": newdata.id,    # hash of the encoding matrix: to serve as primary key
-        "someint": newdata.someint,
-        "somestring": newdata.somestring,
-        "imagedata": newdata.imagedata,
-        "encod": newdata.encod,
-        "matches": newdata.matches,
-    }

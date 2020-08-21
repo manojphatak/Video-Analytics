@@ -8,7 +8,7 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData, translate_old_to_new, translate_new_to_old
+from framedata import FrameData
 
 
 def get_environ() -> dict:
@@ -37,13 +37,11 @@ def consume_kafka_topic():
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         data = pickle.loads(m.value)
-        data = translate_new_to_old(data)
         
-        logger.debug(f"Received data: keys: {data.keys()}")
-        matches= set(data["matches"])
+        matches= set(data.matches)
         if matches.difference(discovered):     # new matches discovered    
             discovered = discovered.union(set(matches))
-            save_image_data_to_jpg(data["imagedata"], env["out_fileloc"])  # save this image somewhere for ref
+            save_image_data_to_jpg(data.imagedata, env["out_fileloc"])  # save this image somewhere for ref
             logger.debug(f"discovered so far... {discovered}")
 
 

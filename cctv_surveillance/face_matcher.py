@@ -13,7 +13,7 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData, translate_old_to_new, translate_new_to_old
+from framedata import FrameData
 
 @Pipe
 def tolist(iterable):
@@ -66,7 +66,7 @@ def load_known_faces(known_faces_path):
 
 def match_faces(new_face, known_faces, tol):
     knonwn_encodes = known_faces | select(lambda f: f["encod"]) | tolist
-    faceencod = new_face["encod"]
+    faceencod = new_face.encod
     matches = face_recognition.compare_faces(knonwn_encodes, faceencod, tol)
 
     # Select only matched records
@@ -91,14 +91,11 @@ def consume_kafka_topic():
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
         new_face = pickle.loads(m.value)
-        new_face = translate_new_to_old(new_face)
         matches= match_faces(new_face, known_faces, env["match_tol"])
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
-            new_face["matches"]= titles
+            new_face.matches = titles
             logger.debug(f"match found: {titles}")
-
-            new_face = translate_old_to_new(new_face)
             outmsg= pickle.dumps(new_face)
             kafkaProducer.send_message(outmsg)   
         else:
