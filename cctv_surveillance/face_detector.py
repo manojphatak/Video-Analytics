@@ -16,24 +16,8 @@ from framedata import FrameData
 from kafka_base_consumer import KafkaBaseConsumer
 
 class FaceDetector(KafkaBaseConsumer):
-    def __init__(self):
-        self.env = self.get_environ()
-
-    def get_environ(self) -> dict:
-        return {
-            "kafka_endpt": os.environ.get("KAFKA_BROKER_URL", ""),
-            "in_topic": os.environ.get("INPUT_TOPIC", ""),
-            "out_topic": os.environ.get("OUTPUT_TOPIC", ""),
-        }
-
-    def get_kafka_cli(self, clitype):
-        topic_mapping= {"producer": self.env["out_topic"], "consumer": self.env["in_topic"]} #todo: use enum instead of string
-        assert clitype in topic_mapping, "incorrect kafka client requested. It has to be either producer or consumer"
-        return KafkaImageCli(
-            bootstrap_servers= [self.env["kafka_endpt"]],
-            topic= topic_mapping[clitype],
-            stop_iteration_timeout= sys.maxsize
-        )
+    def __init__(self ):
+        super().__init__(handler = self.handle_msg)
 
 
     def detect_face(self, imagedata):
@@ -53,19 +37,23 @@ class FaceDetector(KafkaBaseConsumer):
         return pickle.dumps(framedata)
 
 
-    def consume_kafka_topic(self):
-        kafkaConsumer = self.get_kafka_cli("consumer")
-        kafkaConsumer.register_consumer()
-        logger.debug("polling kafka topic now...")
-        kafkaProducer = self.get_kafka_cli("producer")
+    def handle_msg(self, msg):
+        face_encodings= self.detect_face(msg)
+        for encod in face_encodings:
+            logger.debug("detected a face... sending to kafka topic...")
+            outmsg= self.create_out_msg(msg, encod)
+            yield outmsg
 
-        for m in kafkaConsumer.consumer:
-            logger.debug("received message from Kafka")
-            face_encodings= self.detect_face(m.value)
-            for encod in face_encodings:
-                logger.debug("detected a face... sending to kafka topic...")
-                outmsg= self.create_out_msg(m.value, encod)
-                kafkaProducer.send_message(outmsg)   
+
+    # def consume_kafka_topic(self):
+    #     kafkaConsumer = self.get_kafka_cli("consumer")
+    #     kafkaConsumer.register_consumer()
+    #     logger.debug("polling kafka topic now...")
+    #     kafkaProducer = self.get_kafka_cli("producer")
+
+    #     for m in kafkaConsumer.consumer:
+    #         logger.debug("received message from Kafka")
+    #         kafkaProducer.send_message(outmsg)   
         
 
 if __name__== "__main__":
