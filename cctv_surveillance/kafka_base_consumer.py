@@ -32,7 +32,12 @@ class KafkaBaseConsumer:
             topic= topic_mapping[clitype],
             stop_iteration_timeout= sys.maxsize
         )    
+    
 
+
+class KafkaStreamingConsumer(KafkaBaseConsumer):
+    def __init__(self, handler):
+        super().__init__(handler)
 
     def consume_kafka_topic(self, handler):
         kafkaConsumer = self.get_kafka_cli("consumer")
@@ -44,3 +49,11 @@ class KafkaBaseConsumer:
             logger.debug("received message from Kafka") 
             for outmsg in handler(m.value):
                 kafkaProducer.send_message(outmsg)     
+
+
+class KafkaEndConsumer(KafkaBaseConsumer):
+    def __init__(self, handler):
+        super().__init__(handler)
+
+    def consume_kafka_topic(self, handler):
+        pass #todo    

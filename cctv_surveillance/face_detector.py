@@ -3,19 +3,16 @@ import sys
 import logging
 import pickle
 
-import cv2
 import face_recognition
-
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
 from framedata import FrameData
-from kafka_base_consumer import KafkaBaseConsumer
+from kafka_base_consumer import KafkaStreamingConsumer
 
-class FaceDetector(KafkaBaseConsumer):
+class FaceDetector(KafkaStreamingConsumer):
     def __init__(self ):
         super().__init__(handler = self.handle_msg)
 
@@ -44,20 +41,9 @@ class FaceDetector(KafkaBaseConsumer):
             outmsg= self.create_out_msg(msg, encod)
             yield outmsg
 
-
-    # def consume_kafka_topic(self):
-    #     kafkaConsumer = self.get_kafka_cli("consumer")
-    #     kafkaConsumer.register_consumer()
-    #     logger.debug("polling kafka topic now...")
-    #     kafkaProducer = self.get_kafka_cli("producer")
-
-    #     for m in kafkaConsumer.consumer:
-    #         logger.debug("received message from Kafka")
-    #         kafkaProducer.send_message(outmsg)   
-        
+   
 
 if __name__== "__main__":
     logger = init_logger(__file__)
     logger.debug("------------start: inside face_detector...----------------------------")
     face_detector = FaceDetector()
-    face_detector.consume_kafka_topic()
