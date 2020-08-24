@@ -15,17 +15,17 @@ from kafka_base_consumer import KafkaEndConsumer
 
 class FilesystemConsumer(KafkaEndConsumer):
     def __init__(self):
-        super().__init__(handler = self.handle_msg)
         self.discovered = set([])
-        out_fileloc: os.environ.get("OUTPUT_FILE_LOCATION", ""),
-
+        self.out_fileloc = os.environ.get("OUTPUT_FILE_LOCATION", "")
+        super().__init__()
+        
     
     def handle_msg(self, msg):
         data = pickle.loads(msg)
         matches= set(data.matches)
         if matches.difference(self.discovered):     # new matches discovered    
             self.discovered = self.discovered.union(set(matches))
-            save_image_data_to_jpg(data.imagedata, out_fileloc)  # save this image somewhere for ref
+            save_image_data_to_jpg(data.imagedata, self.out_fileloc)  # save this image somewhere for ref
             logger.debug(f"discovered so far... {self.discovered}")
 
 

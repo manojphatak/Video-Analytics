@@ -11,9 +11,9 @@ from cctv_surveillance.appcommon import init_logger
 logger = init_logger(__file__)
 
 class KafkaBaseConsumer:
-    def __init__(self, handler):
+    def __init__(self):
         self.env = self.get_environ()
-        self.consume_kafka_topic(handler)
+        self.consume_kafka_topic(handler= self.handle_msg)
         
 
     def get_environ(self) -> dict:
@@ -33,11 +33,13 @@ class KafkaBaseConsumer:
             stop_iteration_timeout= sys.maxsize
         )    
     
+    def handle_msg(self, msg):
+        assert False, "kafka consumer has not implemented its handle_msg function!!!"
 
 
 class KafkaStreamingConsumer(KafkaBaseConsumer):
-    def __init__(self, handler):
-        super().__init__(handler)
+    def __init__(self):
+        super().__init__()
 
     def consume_kafka_topic(self, handler):
         kafkaConsumer = self.get_kafka_cli("consumer")
@@ -52,8 +54,8 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
 
 
 class KafkaEndConsumer(KafkaBaseConsumer):
-    def __init__(self, handler):
-        super().__init__(handler)
+    def __init__(self):
+        super().__init__()
 
     def consume_kafka_topic(self, handler):
         kafkaConsumer = self.get_kafka_cli("consumer")

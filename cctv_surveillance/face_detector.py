@@ -14,7 +14,7 @@ from kafka_base_consumer import KafkaStreamingConsumer
 
 class FaceDetector(KafkaStreamingConsumer):
     def __init__(self ):
-        super().__init__(handler = self.handle_msg)
+        super().__init__()
 
 
     def detect_face(self, imagedata):
