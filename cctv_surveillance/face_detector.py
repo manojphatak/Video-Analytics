@@ -46,4 +46,4 @@ class FaceDetector(KafkaStreamingConsumer):
 if __name__== "__main__":
     logger = init_logger(__file__)
     logger.debug("------------start: inside face_detector...----------------------------")
-    face_detector = FaceDetector()
+    FaceDetector()

@@ -56,4 +56,9 @@ class KafkaEndConsumer(KafkaBaseConsumer):
         super().__init__(handler)
 
     def consume_kafka_topic(self, handler):
-        pass #todo    
+        kafkaConsumer = self.get_kafka_cli("consumer")
+        kafkaConsumer.register_consumer()
+        logger.debug("polling kafka topic now...")
+        for m in kafkaConsumer.consumer:
+            logger.debug("received message from Kafka") 
+            handler(m.value)
