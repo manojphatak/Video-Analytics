@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import pickle
 
 import face_recognition
 
@@ -26,13 +25,13 @@ class FaceDetector(KafkaStreamingConsumer):
 
 
     def create_out_msg(self, imagedata, encod):
-        framedata = FrameData(
+        return FrameData(
                         id = encod.data.tobytes(), # hash of the encoding matrix: to serve as primary key
                         imagedata = imagedata,
                         encod = encod
-                    )
-        return pickle.dumps(framedata)
-
+        )
+                    
+        
 
     def handle_msg(self, msg):
         face_encodings= self.detect_face(msg)

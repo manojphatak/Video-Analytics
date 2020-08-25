@@ -1,6 +1,7 @@
 from json import dumps, loads
 import os
 import logging
+import pickle
 
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
@@ -76,6 +77,6 @@ class KafkaImageCli(KafkaCli):
         super(KafkaImageCli, self).__init__(bootstrap_servers,
                                             topic,
                                             stop_iteration_timeout,
-                                            value_serializer=lambda m: m,
-                                            value_deserializer=lambda m: m
+                                            value_serializer=lambda m: pickle.dumps(m),
+                                            value_deserializer=lambda m: pickle.loads(m)
                                             )

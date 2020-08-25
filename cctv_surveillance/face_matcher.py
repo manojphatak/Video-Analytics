@@ -2,7 +2,6 @@ import os
 import sys
 import logging
 import fnmatch
-import pickle
 
 import cv2
 import face_recognition
@@ -90,14 +89,13 @@ def consume_kafka_topic():
 
     for m in kafkaConsumer.consumer:
         logger.debug("received message from Kafka")
-        new_face = pickle.loads(m.value)
+        new_face = m.value
         matches= match_faces(new_face, known_faces, env["match_tol"])
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
             new_face.matches = titles
             logger.debug(f"match found: {titles}")
-            outmsg= pickle.dumps(new_face)
-            kafkaProducer.send_message(outmsg)   
+            kafkaProducer.send_message(new_face)   
         else:
             logger.debug("New face found. Updating the database...")
             save_image_data_to_jpg(new_face.imagedata, outpath= env["face_database"])

@@ -1,7 +1,6 @@
 import os
 import sys
 import logging
-import pickle
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
@@ -21,11 +20,10 @@ class FilesystemConsumer(KafkaEndConsumer):
         
     
     def handle_msg(self, msg):
-        data = pickle.loads(msg)
-        matches= set(data.matches)
+        matches= set(msg.matches)
         if matches.difference(self.discovered):     # new matches discovered    
             self.discovered = self.discovered.union(set(matches))
-            save_image_data_to_jpg(data.imagedata, self.out_fileloc)  # save this image somewhere for ref
+            save_image_data_to_jpg(msg.imagedata, self.out_fileloc)  # save this image somewhere for ref
             logger.debug(f"discovered so far... {self.discovered}")
 
 
