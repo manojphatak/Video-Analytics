@@ -49,8 +49,9 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
 
         for m in kafkaConsumer.consumer:
             logger.debug("received message from Kafka") 
-            for outmsg in handler(m.value):
-                kafkaProducer.send_message(outmsg)     
+            for (status, outmsg) in handler(m.value):
+                if status:
+                    kafkaProducer.send_message(outmsg)     
 
 
 class KafkaEndConsumer(KafkaBaseConsumer):

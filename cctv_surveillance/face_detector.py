@@ -30,7 +30,6 @@ class FaceDetector(KafkaStreamingConsumer):
                         imagedata = imagedata,
                         encod = encod
         )
-                    
         
 
     def handle_msg(self, msg):
@@ -38,7 +37,7 @@ class FaceDetector(KafkaStreamingConsumer):
         for encod in face_encodings:
             logger.debug("detected a face... sending to kafka topic...")
             outmsg= self.create_out_msg(msg, encod)
-            yield outmsg
+            yield True, outmsg
 
    
 
