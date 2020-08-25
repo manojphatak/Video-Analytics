@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 import time
-import fnmatch
+from glob import glob
 
 import cv2
 
@@ -26,7 +26,8 @@ def get_environ() -> dict:
 def get_movie_files() -> list:
     movie_source= env["movie_source"]
     assert os.path.exists(movie_source), f"filepath does not exist: {movie_source}"
-    videofiles = fnmatch.filter(os.listdir(movie_source), "*.webm")
+    videofiles = glob(f'{movie_source}/*.webm')
+    videofiles.extend(glob(f'{movie_source}/*.mp4'))
     return [os.path.join(movie_source, f) for f in videofiles]
 
 
