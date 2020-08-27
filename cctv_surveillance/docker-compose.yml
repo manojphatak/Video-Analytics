@@ -1,6 +1,6 @@
 version: '3'
 
-# Note: Be sure to setup the env variable "VIDEO_ANALYTICS_DATA" pointing to host file system
+# Note: Be sure to setup the env variable "HOST_FOLDER" pointing to host file system
 
 services:
 
@@ -14,9 +14,9 @@ services:
       MOVIE_FILES_SOURCE: "/usr/app/movies"
 
     volumes:
-     - ..:/usr/app/sandbox                              # this is for testing the code before commit
-     - ${VIDEO_ANALYTICS_DATA}/movies:/usr/app/movies
-    working_dir: /usr/app/sandbox/cctv_surveillance
+     - ..:${DOCKER_SRC}                              # this is for testing the code before commit
+     - ${HOST_FOLDER}/movies:/usr/app/movies
+    working_dir: ${DOCKER_SRC}/cctv_surveillance
     entrypoint: ["python3", "movie_streamer.py"]
   
 
@@ -28,10 +28,10 @@ services:
       INPUT_TOPIC: queueing.raw-frames
       OUTPUT_TOPIC: transactions.motion
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/transient-data:/usr/app/temp
-      - ${VIDEO_ANALYTICS_DATA}/output:/usr/app/out
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ..:${DOCKER_SRC}  
+      - ${HOST_FOLDER}/transient-data:/usr/app/temp
+      - ${HOST_FOLDER}/output:/usr/app/out
+    working_dir: ${DOCKER_SRC}/cctv_surveillance
     entrypoint: ["python3", "motion_detector.py"]  
 
 
@@ -43,9 +43,9 @@ services:
       INPUT_TOPIC: transactions.motion
       OUTPUT_TOPIC: transactions.faces
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp  
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ..:${DOCKER_SRC}  
+      - ${HOST_FOLDER}/transient-data:/tmp  
+    working_dir: ${DOCKER_SRC}/cctv_surveillance
     entrypoint: ["python3", "face_detector.py"]  
 
 
@@ -59,9 +59,9 @@ services:
       FACE_DATABASE: /tmp/faces
       FACE_MATCH_TOL: 0.6
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/known-faces:/tmp/faces  
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ..:${DOCKER_SRC}  
+      - ${HOST_FOLDER}/known-faces:/tmp/faces  
+    working_dir: ${DOCKER_SRC}/cctv_surveillance
     entrypoint: ["python3", "face_matcher.py"]    
 
 
@@ -73,9 +73,9 @@ services:
       INPUT_TOPIC: transactions.matched-faces
       OUTPUT_FILE_LOCATION: /tmp
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/output:/tmp  
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ..:${DOCKER_SRC}  
+      - ${HOST_FOLDER}/output:/tmp  
+    working_dir: ${DOCKER_SRC}/cctv_surveillance
     entrypoint: ["python3", "filesystem_consumer.py"]  
     
 
