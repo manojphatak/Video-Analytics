@@ -16,9 +16,23 @@ Horizontaly Scalable, Distributed system to churn out video feeds &amp; infer an
 Intent of this project is to build a **Minimalistic**, **Horizontally Scalable**, **Distributed** system to churn out volumes of data & provide meaningful insights into the same.
 The use case we are pursuing is that of churning Computer Vision data e.g. CCTV footage, You tube videos or images.
 
+
 ##  Why this project?
 One can find numerous solutions for solving problems related to Computer Vision & data analytics in-general. However, most of these solutions are either in the form of "*technology*" (e.g. training a good face recognition model) or "*full blown product*".
 We do not want to re-invent the wheel. This project intends to build a minimalistic product that is usable, as well as can act as starting code for building a more complex product.
+
+e.g. Instead of working on how we can make our deep learning better for recognizing faces or OCR, this project focusses on building a usable product out of it, which is **minimalistic** in nature, by making use of available open source technologies
+
+
+## Current State
+This project would consist of multiple apps.
+With the current **CCTV Surveillance** app (which is under development), one can feed CCT footage (exported movie files) as an input, the application would output which all human faces it saw.
+
+
+
+## Disclaimer
+This is not an official HCL ERS product
+
 
 ## Code Organisation
 - Each top-level folder at the root acts as "an app". 
