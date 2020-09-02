@@ -9,7 +9,7 @@ services:
     container_name: movie-feeder
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      TRANSACTIONS_TOPIC: queueing.raw-frames
+      TRANSACTIONS_TOPIC: cctv.raw-frames
       FRAME_CAPTURE_PERIOD: 1                           # Capture frame at every 'n' seconds
       MOVIE_FILES_SOURCE: "/usr/app/movies"
 
@@ -25,8 +25,8 @@ services:
     container_name: motion-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: queueing.raw-frames
-      OUTPUT_TOPIC: transactions.motion
+      INPUT_TOPIC: cctv.raw-frames
+      OUTPUT_TOPIC: cctv.motion-detected
     volumes:
       - ..:${DOCKER_SRC}  
       - ${HOST_FOLDER}/transient-data:/usr/app/temp
@@ -40,8 +40,8 @@ services:
     container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.motion
-      OUTPUT_TOPIC: transactions.faces
+      INPUT_TOPIC: cctv.motion-detected
+      OUTPUT_TOPIC: cctv.faces-detected
     volumes:
       - ..:${DOCKER_SRC}  
       - ${HOST_FOLDER}/transient-data:/tmp  
@@ -54,7 +54,7 @@ services:
     container_name: face-matcher
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.faces
+      INPUT_TOPIC: cctv.faces-detected
       OUTPUT_TOPIC: transactions.matched-faces
       FACE_DATABASE: /tmp/faces
       FACE_MATCH_TOL: 0.6
