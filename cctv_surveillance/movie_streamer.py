@@ -12,6 +12,7 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaImageCli
 from cctv_surveillance.appcommon import init_logger
 from kafka_producer import KafkaProducer
+from framedata import FrameData
 
 
 class MovieStreamer(KafkaProducer):
@@ -67,7 +68,9 @@ class MovieStreamer(KafkaProducer):
         st_time = time.time()
         for movie in self.get_movie_files():
             for frame in self.read_movie(movie):
-                self.send_message(frame.tobytes())
+                msg = FrameData()
+                msg.raw_frame= frame.tobytes()
+                self.send_message(msg)
         end_time = time.time()
         logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
     
