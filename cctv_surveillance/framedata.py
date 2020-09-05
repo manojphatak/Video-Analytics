@@ -7,9 +7,12 @@ class FrameData:
     def __init__(self, id=None, imagedata=None, encod=None, matches=[]):
         self.raw_frame: bytes = b""
         self.t_created : datetime.datetime = datetime.datetime.now() 
+        self.t_updated : datetime.datetime = self.t_created
         
-        self.id : bytes = id   # this is hash of encoding
-        self.imagedata: bytes = imagedata  # image bytes
-        self.encod: numpy.ndarray = encod
-        self.matches: List[str]  = matches  # people whom it matches to
+        self.faces: List = []
+        self.matched_faces: List[str]  = []  # people whom it matches to
+
+   
+
+
 
