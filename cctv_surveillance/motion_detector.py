@@ -1,3 +1,10 @@
+'''
+CREDITS: This code is copied & then modified from:
+Original Author: Adrian Rosebrock
+Blog: Basic Motion detection and tracking with Python and OpenCV
+URL: https://www.pyimagesearch.com/2015/05/25/basic-motion-detection-and-tracking-with-python-and-opencv/
+'''
+
 import os
 import sys
 import logging
