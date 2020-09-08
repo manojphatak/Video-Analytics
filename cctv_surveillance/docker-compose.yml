@@ -34,12 +34,26 @@ services:
     entrypoint: ["python3", "motion_detector.py"]  
 
 
+  object-detector:
+    build: .  
+    container_name: object-detector
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: cctv.motion-detected
+      OUTPUT_TOPIC: cctv.object-detected
+    volumes:
+      - ../:${DOCKER_SANDBOX}  
+      - ${HOST_FOLDER}/output:$DOCKER_HOME/out
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/object_detector
+    entrypoint: ["python3", "object_detector.py"]    
+
+
   face-detector:
     build: .
     container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: cctv.motion-detected
+      INPUT_TOPIC: cctv.object-detected
       OUTPUT_TOPIC: cctv.faces-detected
     volumes:
       - ../:${DOCKER_SANDBOX}  
