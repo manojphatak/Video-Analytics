@@ -36,7 +36,17 @@ services:
       KAFKA_BROKERCONNECT: "kafka:29092"
       JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
     depends_on:
-      - "kafka"   
+      - "kafka" 
+      
+      
+  portainer:
+    image: portainer/portainer
+    restart: "always"
+    ports:
+      - "9001:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/portainer:/data portainer/portainer
 
     
 networks:
