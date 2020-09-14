@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # time in secs
-WAIT_FOR_SERVICES=${1:15}
+WAIT_FOR_SERVICES=$1
+echo -e "Time to allow services to start consuming: $WAIT_FOR_SERVICES seconds"
 
 GREEN="\e[1;32m"
 RED="\e[1;31m"
@@ -30,7 +31,9 @@ docker-compose stop
 docker exec kafka bash ./remove_all_topics.sh
 
 # Clear prev logs in containers
-sudo bash ./clear-services-logs.sh
+#sudo bash ./clear-services-logs.sh
+docker-compose rm -f
+
 
 # Start the Services
 docker-compose up -d
