@@ -61,16 +61,6 @@ class KafkaCli:
             print(m.value)
 
 
-class KafkaJsonCli(KafkaCli):
-    def __init__(self, bootstrap_servers, topic):
-        super(KafkaJsonCli, self).__init__(bootstrap_servers,
-                                           topic,
-                                           value_serializer=lambda m: dumps(
-                                               m).encode('utf-8'),
-                                           value_deserializer=lambda m: loads(
-                                               m.decode('utf-8'))
-                                           )
-
 
 class KafkaImageCli(KafkaCli):
     def __init__(self, bootstrap_servers, topic, stop_iteration_timeout):
