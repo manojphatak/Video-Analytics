@@ -17,7 +17,7 @@ from framedata import FrameData
 
 class MovieStreamer(KafkaProducer):
     def __init__(self):
-        self.movie_source= os.environ.get("MOVIE_FILES_SOURCE", "")
+        self.movie_source= os.environ.get("MOVIE_FILES", "")
         self.frame_cap_period= float(os.environ.get("FRAME_CAPTURE_PERIOD", ""))
         assert os.path.exists(self.movie_source), f"filepath does not exist: {self.movie_source}"
         super().__init__()
