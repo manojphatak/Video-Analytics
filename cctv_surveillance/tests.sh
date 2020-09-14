@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # time in secs
-WAIT_FOR_SERVICES=$1
+WAIT_FOR_SERVICES=${1:15}
 
 GREEN="\e[1;32m"
 RED="\e[1;31m"
