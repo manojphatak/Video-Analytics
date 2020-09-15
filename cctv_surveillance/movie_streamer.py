@@ -67,12 +67,14 @@ class MovieStreamer(KafkaProducer):
         
         st_time = time.time()
         for movie in self.get_movie_files():
+            _= os.path.split(movie)[1]
+            fname= os.path.splitext(_)[0]
             for frame in self.read_movie(movie):
                 msg = FrameData()
                 msg.raw_frame = {
                     "image_bytes": frame.tobytes(),
                     "movie_filepath": movie,
-                    "movie_filename": os.path.split(movie)[1]
+                    "movie_filename": fname
                 }
                 self.send_message(msg)
         end_time = time.time()

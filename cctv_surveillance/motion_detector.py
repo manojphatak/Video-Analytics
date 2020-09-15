@@ -27,6 +27,7 @@ from framedata import FrameData
 
 OUTDIR = "/usr/app/out/MotionDetector"
 
+
 class MotionDetector(KafkaStreamingConsumer):
     def __init__(self):
         #todo: move following variables to docker-compose as env
@@ -42,6 +43,14 @@ class MotionDetector(KafkaStreamingConsumer):
         frame = face_recognition.load_image_file(tempjpg)  #todo: should read from in-memory stream- rather than temp file
         os.remove(tempjpg)
         return frame
+
+
+    def _write_frame_to_file(self,frame, msg):
+        outdir = os.path.join(OUTDIR, msg.raw_frame["movie_filename"])
+        ensure_dir_path(outdir)
+        outfile= os.path.join(outdir, f"{self._frameid}.jpg") 
+        cv2.imwrite(outfile,frame)
+        
 
 
     def detect_motion(self, msg) -> bool:
@@ -99,9 +108,7 @@ class MotionDetector(KafkaStreamingConsumer):
             return False
 
         if len(cnts) > 0:
-            fname = f"{self.frame_id}_{str(len(cnts))}_{str(max_contour_area)}.jpg"
-            outfile= os.path.join(OUTDIR, fname) 
-            cv2.imwrite(outfile,frame)
+            self._write_frame_to_file(frame, msg)
             return True
         else:
             return False
