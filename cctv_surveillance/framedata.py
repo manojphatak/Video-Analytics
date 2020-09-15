@@ -7,7 +7,7 @@ class FrameData:
     def __init__(self):
         self.raw_frame = {
             "image_bytes": b"",
-            "movie_file" : "",
+            "movie_filename" : "",
             "movie_filepath": ""
         }
 
