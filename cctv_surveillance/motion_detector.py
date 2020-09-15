@@ -108,7 +108,7 @@ class MotionDetector(KafkaStreamingConsumer):
 
 
     def handle_msg(self, msg):   
-        motion_detected = self.detect_motion(msg.raw_frame)
+        motion_detected = self.detect_motion(msg.raw_frame["image_bytes"])
         yield (motion_detected, msg)     # forward the same frame for further processing, if the motion is detected
 
 

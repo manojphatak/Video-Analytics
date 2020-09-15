@@ -30,7 +30,7 @@ class FaceDetector(KafkaStreamingConsumer):
 
 
     def handle_msg(self, msg):
-        face_encodings= self.detect_face(msg.raw_frame)
+        face_encodings= self.detect_face(msg.raw_frame["image_bytes"])
         if face_encodings:
             logger.debug("detected a face... sending to kafka topic...")
             msg = self.update_out_msg(msg, face_encodings)

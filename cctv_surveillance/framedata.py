@@ -5,7 +5,12 @@ import datetime
 # Each frameData describes a "face"
 class FrameData:
     def __init__(self):
-        self.raw_frame: bytes = b""
+        self.raw_frame = {
+            "image_bytes": b"",
+            "movie_file" : "",
+            "movie_filepath": ""
+        }
+
         self.t_created : datetime.datetime = datetime.datetime.now() 
         self.t_updated : datetime.datetime = self.t_created
         
@@ -14,6 +19,3 @@ class FrameData:
 
     def update_timestamp(self):
        self.t_updated = datetime.datetime.now()
-
-
-

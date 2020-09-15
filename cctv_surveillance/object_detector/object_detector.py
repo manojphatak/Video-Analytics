@@ -157,7 +157,7 @@ class ObjectDetector(KafkaStreamingConsumer):
 
 
     def handle_msg(self, msg):   
-        frame = self._get_frame_from_imagedata(msg.raw_frame)
+        frame = self._get_frame_from_imagedata(msg.raw_frame["image_bytes"])
         objects, anotated_image = self.detect_objects(frame)
         
         if objects:

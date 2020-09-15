@@ -69,7 +69,7 @@ class MovieStreamer(KafkaProducer):
         for movie in self.get_movie_files():
             for frame in self.read_movie(movie):
                 msg = FrameData()
-                msg.raw_frame= frame.tobytes()
+                msg.raw_frame["image_bytes"]= frame.tobytes()
                 self.send_message(msg)
         end_time = time.time()
         logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
