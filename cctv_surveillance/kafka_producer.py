@@ -20,6 +20,7 @@ class KafkaProducer:
         self.kafkaCli = KafkaImageCli(
             bootstrap_servers= [self.kafka_endpt],
             topic= self.topic,
+            consumer_group_id = "group-1",      #todo: group-id & stop-iteration-timeout doe not make sense to the Producer
             stop_iteration_timeout= self.stop_iteration_timeout
         )
 

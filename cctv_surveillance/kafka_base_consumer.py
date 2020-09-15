@@ -30,6 +30,7 @@ class KafkaBaseConsumer:
         return KafkaImageCli(
             bootstrap_servers= [self.env["kafka_endpt"]],
             topic= topic_mapping[clitype],
+            consumer_group_id = "group-1",
             stop_iteration_timeout= sys.maxsize
         )    
     

@@ -10,7 +10,7 @@ from kafka.errors import TopicAlreadyExistsError
 logger = logging.getLogger("video_analytics")
 
 class KafkaCli:
-    def __init__(self, bootstrap_servers, topic, stop_iteration_timeout,
+    def __init__(self, bootstrap_servers, topic, consumer_group_id, stop_iteration_timeout,
                  value_serializer, value_deserializer,
                  ):
         logger.info("Initializing KafkaCli with servers: {servers}".format(servers= bootstrap_servers))
@@ -20,6 +20,7 @@ class KafkaCli:
         self.value_serializer = value_serializer
         self.value_deserializer = value_deserializer
         self.stop_iteration_timeout = stop_iteration_timeout
+        self.consumer_group_id = consumer_group_id
         
 
     def create_topic(self, topic):
@@ -49,7 +50,7 @@ class KafkaCli:
         self.consumer = KafkaConsumer(self.topic,
                                       auto_offset_reset='earliest',
                                       enable_auto_commit=True,  # make this to False, if we want to consume from begining
-                                      group_id='my-group-1',
+                                      group_id= self.consumer_group_id,
                                       value_deserializer=self.value_deserializer,
                                       bootstrap_servers=self.bootstrap_servers,
                                       # StopIteration if no message after time in millisec
@@ -63,10 +64,11 @@ class KafkaCli:
 
 
 class KafkaImageCli(KafkaCli):
-    def __init__(self, bootstrap_servers, topic, stop_iteration_timeout):
-        super(KafkaImageCli, self).__init__(bootstrap_servers,
-                                            topic,
-                                            stop_iteration_timeout,
-                                            value_serializer=lambda m: pickle.dumps(m),
-                                            value_deserializer=lambda m: pickle.loads(m)
-                                            )
+    def __init__(self, bootstrap_servers, topic, consumer_group_id, stop_iteration_timeout):
+        super().__init__(bootstrap_servers,
+                        topic,
+                        consumer_group_id,
+                        stop_iteration_timeout,
+                        value_serializer=lambda m: pickle.dumps(m),
+                        value_deserializer=lambda m: pickle.loads(m)
+        )
