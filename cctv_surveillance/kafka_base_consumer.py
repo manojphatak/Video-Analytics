@@ -13,8 +13,9 @@ logger = init_logger(__file__)
 class KafkaBaseConsumer:
     def __init__(self):
         self.env = self.get_environ()
+        self._frameid = -1
         self.consume_kafka_topic(handler= self.handle_msg)
-        
+                
 
     def get_environ(self) -> dict:
         return {
@@ -50,6 +51,7 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
 
         for m in kafkaConsumer.consumer:
             logger.debug("received message from Kafka") 
+            self._frameid += 1
             for (status, outmsg) in handler(m.value):
                 if status:
                     outmsg.update_timestamp()
@@ -66,4 +68,5 @@ class KafkaEndConsumer(KafkaBaseConsumer):
         logger.debug("polling kafka topic now...")
         for m in kafkaConsumer.consumer:
             logger.debug("received message from Kafka") 
+            self._frameid += 1
             handler(m.value)

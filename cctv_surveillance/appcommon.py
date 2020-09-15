@@ -27,4 +27,10 @@ def save_image_data_to_jpg(imagedata, outpath, prefix= ""):
     tempjpg = os.path.join(outpath, get_random_filename())
     with open(tempjpg, "wb") as f:
         f.write(imagedata)
-    return tempjpg        
+    return tempjpg   
+
+
+def ensure_dir_path(dirpath):
+    if not os.path.exists(dirpath):
+        os.mkdir(dirpath)
+    assert os.path.exists(dirpath), f"failed to create directory: {dirpath}"

@@ -20,12 +20,12 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaImageCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
 from kafka_base_consumer import KafkaStreamingConsumer
 from framedata import FrameData
 
-
+OUTDIR = "/usr/app/out/MotionDetector"
 
 class MotionDetector(KafkaStreamingConsumer):
     def __init__(self):
@@ -100,7 +100,7 @@ class MotionDetector(KafkaStreamingConsumer):
 
         if len(cnts) > 0:
             fname = f"{self.frame_id}_{str(len(cnts))}_{str(max_contour_area)}.jpg"
-            outfile= os.path.join("/usr/app/out", fname)   #todo: use env instead of hardcoded path
+            outfile= os.path.join(OUTDIR, fname) 
             cv2.imwrite(outfile,frame)
             return True
         else:
@@ -114,5 +114,6 @@ class MotionDetector(KafkaStreamingConsumer):
 
 if __name__== "__main__":
     logger = init_logger(__file__)
+    ensure_dir_path(OUTDIR)
     logger.debug("------------start: inside motion-detector...----------------------------")
     MotionDetector()   
