@@ -7,7 +7,7 @@ from appcommon import init_logger
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 
 logger = init_logger(__file__)
 
@@ -17,11 +17,9 @@ class KafkaProducer:
         assert self.kafka_endpt
         self.topic= os.environ.get("TRANSACTIONS_TOPIC", "")
         self.stop_iteration_timeout = 3000
-        self.kafkaCli = KafkaImageCli(
+        self.kafkaCli = KafkaCli(
             bootstrap_servers= [self.kafka_endpt],
-            topic= self.topic,
-            consumer_group_id = "group-1",      #todo: group-id & stop-iteration-timeout doe not make sense to the Producer
-            stop_iteration_timeout= self.stop_iteration_timeout
+            topic= self.topic
         )
 
 

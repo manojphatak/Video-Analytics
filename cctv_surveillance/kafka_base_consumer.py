@@ -5,7 +5,7 @@ import logging
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 
 logger = init_logger(__file__)
@@ -28,11 +28,9 @@ class KafkaBaseConsumer:
     def get_kafka_cli(self, clitype):
         topic_mapping= {"producer": self.env["out_topic"], "consumer": self.env["in_topic"]} #todo: use enum instead of string
         assert clitype in topic_mapping, "incorrect kafka client requested. It has to be either producer or consumer"
-        return KafkaImageCli(
+        return KafkaCli(
             bootstrap_servers= [self.env["kafka_endpt"]],
-            topic= topic_mapping[clitype],
-            consumer_group_id = "group-1",
-            stop_iteration_timeout= sys.maxsize
+            topic= topic_mapping[clitype]
         )    
     
     def handle_msg(self, msg):

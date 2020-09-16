@@ -2,6 +2,7 @@ from json import dumps, loads
 import os
 import logging
 import pickle
+import sys
 
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
@@ -10,17 +11,20 @@ from kafka.errors import TopicAlreadyExistsError
 logger = logging.getLogger("video_analytics")
 
 class KafkaCli:
-    def __init__(self, bootstrap_servers, topic, consumer_group_id, stop_iteration_timeout,
-                 value_serializer, value_deserializer,
-                 ):
+    def __init__(self, 
+                 bootstrap_servers, 
+                 topic
+    ):
         logger.info("Initializing KafkaCli with servers: {servers}".format(servers= bootstrap_servers))
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
+
+        self.value_serializer=lambda m: pickle.dumps(m)
+        self.value_deserializer=lambda m: pickle.loads(m)
+        self.stop_iteration_timeout = sys.maxsize
+        self.consumer_group_id = "1"
+
         self.create_topic(topic)
-        self.value_serializer = value_serializer
-        self.value_deserializer = value_deserializer
-        self.stop_iteration_timeout = stop_iteration_timeout
-        self.consumer_group_id = consumer_group_id
         
 
     def create_topic(self, topic):
@@ -29,13 +33,12 @@ class KafkaCli:
                 bootstrap_servers= self.bootstrap_servers,
             )
 
-            topic_list = []
-            topic_list.append(
-                NewTopic(name=topic, num_partitions=1, replication_factor=1))
+            topic_list = [(NewTopic(name=topic, num_partitions=1, replication_factor=1))]
             admin_client.create_topics(
                 new_topics=topic_list, validate_only=False)
         except TopicAlreadyExistsError:
             pass  # ignore
+
 
     def send_message(self, msg):
         producer = KafkaProducer(
@@ -46,13 +49,14 @@ class KafkaCli:
         producer.send(self.topic, value=msg)
         producer.flush()
 
+
     def register_consumer(self):
         self.consumer = KafkaConsumer(self.topic,
-                                      auto_offset_reset='earliest',
-                                      enable_auto_commit=True,  # make this to False, if we want to consume from begining
+                                      auto_offset_reset= 'earliest',
+                                      enable_auto_commit= True,  # make this to False, if we want to consume from begining
                                       group_id= self.consumer_group_id,
-                                      value_deserializer=self.value_deserializer,
-                                      bootstrap_servers=self.bootstrap_servers,
+                                      value_deserializer= self.value_deserializer,
+                                      bootstrap_servers= self.bootstrap_servers,
                                       # StopIteration if no message after time in millisec
                                       consumer_timeout_ms=self.stop_iteration_timeout
                                       )
@@ -61,14 +65,3 @@ class KafkaCli:
         for m in self.consumer:
             print(m.value)
 
-
-
-class KafkaImageCli(KafkaCli):
-    def __init__(self, bootstrap_servers, topic, consumer_group_id, stop_iteration_timeout):
-        super().__init__(bootstrap_servers,
-                        topic,
-                        consumer_group_id,
-                        stop_iteration_timeout,
-                        value_serializer=lambda m: pickle.dumps(m),
-                        value_deserializer=lambda m: pickle.loads(m)
-        )

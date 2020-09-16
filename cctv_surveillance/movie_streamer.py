@@ -9,7 +9,7 @@ import cv2
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 from kafka_producer import KafkaProducer
 from framedata import FrameData
