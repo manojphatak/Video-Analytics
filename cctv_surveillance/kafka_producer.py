@@ -23,7 +23,7 @@ class KafkaProducer:
         )
 
 
-    def send_message(self, msg):
-        self.kafkaCli.send_message(msg)
+    def send_message(self, value, key=None):
+        self.kafkaCli.send_message(key= key, value= value)
 
 

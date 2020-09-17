@@ -40,13 +40,14 @@ class KafkaCli:
             pass  # ignore
 
 
-    def send_message(self, msg):
+    def send_message(self, value, key=None):
         producer = KafkaProducer(
-            value_serializer=self.value_serializer,
+            value_serializer= self.value_serializer,
+            key_serializer= str.encode if key else None,
             bootstrap_servers= self.bootstrap_servers
         )
 
-        producer.send(self.topic, value=msg)
+        producer.send(self.topic, key=key, value=value)
         producer.flush()
 
 

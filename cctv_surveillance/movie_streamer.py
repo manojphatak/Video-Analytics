@@ -76,7 +76,7 @@ class MovieStreamer(KafkaProducer):
                     "movie_filepath": movie,
                     "movie_filename": fname
                 }
-                self.send_message(msg)
+                self.send_message(key= fname, value= msg)
         end_time = time.time()
         logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
     
