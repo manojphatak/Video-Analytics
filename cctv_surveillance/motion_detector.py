@@ -23,7 +23,8 @@ from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
 from kafka_base_consumer import KafkaStreamingConsumer
-from framedata import FrameData
+#from framedata import FrameData
+import kafka_message_pb2 as KafkaMsg
 
 OUTDIR = "/usr/app/out/MotionDetector"
 
@@ -46,7 +47,7 @@ class MotionDetector(KafkaStreamingConsumer):
 
 
     def _write_frame_to_file(self,frame, msg):
-        outdir = os.path.join(OUTDIR, msg.raw_frame["movie_filename"])
+        outdir = os.path.join(OUTDIR, msg.raw_frame.movie_filename)
         ensure_dir_path(outdir)
         outfile= os.path.join(outdir, f"{self._frameid}.jpg") 
         cv2.imwrite(outfile,frame)
@@ -57,8 +58,8 @@ class MotionDetector(KafkaStreamingConsumer):
         '''
         returns True if motion is detected w.r.t. baseline frmes, otherwise False
         '''
-        imagedata =  msg.raw_frame["image_bytes"]
-        moviefile = msg.raw_frame['movie_filename']
+        imagedata =  msg.raw_frame.image_bytes
+        moviefile = msg.raw_frame.movie_filename
         self.frame_id += 1
         logger.debug(f"working on frame: {self.frame_id}, movie file: {moviefile}")
 

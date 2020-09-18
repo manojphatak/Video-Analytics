@@ -39,6 +39,8 @@ RUN PROTOC_ZIP=protoc-3.7.1-linux-x86_64.zip \
     && unzip -o $PROTOC_ZIP -d /usr/local 'include/*' \
     && rm -f $PROTOC_ZIP
 
+RUN pip install google \
+    && pip install protobuf
 
 RUN mkdir /usr/app/temp \
     && mkdir /usr/app/out
@@ -48,5 +50,5 @@ RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics
     && git checkout dynamic
 
 # Run ProtoBuff compiler to generate python output
-RUN cd Video-Analytics/cctv_surveillance  \
-    && protoc --python_out=. ./kafka_message.proto
+#RUN cd Video-Analytics/cctv_surveillance  \
+#    && protoc --python_out=. ./kafka_message.proto

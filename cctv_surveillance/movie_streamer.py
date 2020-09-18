@@ -13,6 +13,7 @@ from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 from kafka_producer import KafkaProducer
 from framedata import FrameData
+import kafka_message_pb2 as KafkaMsg
 
 
 class MovieStreamer(KafkaProducer):
@@ -70,13 +71,24 @@ class MovieStreamer(KafkaProducer):
             _= os.path.split(movie)[1]
             fname= os.path.splitext(_)[0]
             for frame in self.read_movie(movie):
-                msg = FrameData()
+                #-------------------------------
+                """ msg = FrameData()
                 msg.raw_frame = {
                     "image_bytes": frame.tobytes(),
                     "movie_filepath": movie,
                     "movie_filename": fname
-                }
+                } """
+                #-------------------------------
+                msg = KafkaMsg.Frame()
+                raw_frame = KafkaMsg.Frame.RawFrame()
+                raw_frame.movie_filename= fname
+                raw_frame.movie_filepath= movie
+                raw_frame.image_bytes= frame.tobytes()
+                msg.raw_frame.CopyFrom(raw_frame)
+                
+                #-------------------------------
                 self.send_message(key= fname, value= msg)
+
         end_time = time.time()
         logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
     

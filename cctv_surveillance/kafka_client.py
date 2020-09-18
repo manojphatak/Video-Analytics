@@ -8,6 +8,8 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
+import kafka_message_pb2 as KafkaMsg
+
 logger = logging.getLogger("video_analytics")
 
 class KafkaCli:
@@ -15,12 +17,22 @@ class KafkaCli:
                  bootstrap_servers, 
                  topic
     ):
+        def deserialize_msg(m):
+            msg = KafkaMsg.Frame()
+            raw_frame = KafkaMsg.Frame.RawFrame()
+            msg.raw_frame.CopyFrom(raw_frame)
+            msg.ParseFromString(m)
+            return msg
+
         logger.info("Initializing KafkaCli with servers: {servers}".format(servers= bootstrap_servers))
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
 
-        self.value_serializer=lambda m: pickle.dumps(m)
-        self.value_deserializer=lambda m: pickle.loads(m)
+        #self.value_serializer=lambda m: pickle.dumps(m)
+        #self.value_deserializer=lambda m: pickle.loads(m)
+        self.value_serializer= lambda m: m.SerializeToString()
+        self.value_deserializer= lambda m: deserialize_msg(m)
+       
         self.stop_iteration_timeout = sys.maxsize
         self.consumer_group_id = "1"
 

@@ -1,12 +1,15 @@
 import os
 import sys
 import logging
+import datetime
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
+
+import kafka_message_pb2 as KafkaMsg
 
 logger = init_logger(__file__)
 
@@ -52,7 +55,8 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
             self._frameid += 1
             for (status, outmsg) in handler(m.value):
                 if status:
-                    outmsg.update_timestamp()
+                    outmsg.t_updated = datetime.datetime.now().timestamp()   #todo: check if protobuf has type for timestamp
+                    #outmsg.update_timestamp()
                     kafkaProducer.send_message(outmsg)     
 
 

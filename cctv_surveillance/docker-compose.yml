@@ -23,6 +23,7 @@ services:
      - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
     working_dir: ${DOCKER_CODE}/cctv_surveillance
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
   
 
