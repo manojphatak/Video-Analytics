@@ -24,14 +24,6 @@ RUN pkg-config --libs --cflags dlib-1 \
     && rm -rf ~/dlib /var/cache/apk/* /usr/share/man /usr/local/share/man /tmp/*
 
 
-WORKDIR /usr/app
-
-ADD ./requirements_handcrafted.txt ./
-RUN pip install -r requirements_handcrafted.txt
-
-# todo: merge with requirements.txt
-RUN pip install imutils    
-
 # Install Protocol buffers
 RUN PROTOC_ZIP=protoc-3.7.1-linux-x86_64.zip \
     && curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/$PROTOC_ZIP  \
@@ -39,16 +31,17 @@ RUN PROTOC_ZIP=protoc-3.7.1-linux-x86_64.zip \
     && unzip -o $PROTOC_ZIP -d /usr/local 'include/*' \
     && rm -f $PROTOC_ZIP
 
-RUN pip install google \
-    && pip install protobuf
+ADD ./requirements_handcrafted.txt ./
+RUN pip install -r requirements_handcrafted.txt
 
+WORKDIR /usr/app
+
+# Create output directories for the programs
 RUN mkdir /usr/app/temp \
     && mkdir /usr/app/out
 
+# Checkout the source code
 RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics   \
     && cd Video-Analytics   \
     && git checkout dynamic
 
-# Run ProtoBuff compiler to generate python output
-#RUN cd Video-Analytics/cctv_surveillance  \
-#    && protoc --python_out=. ./kafka_message.proto

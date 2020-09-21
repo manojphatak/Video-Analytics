@@ -1,9 +1,14 @@
 pipe
 PyYAML
 kafka-python
-dlib
+
 opencv-python
 opencv-contrib-python
+
+dlib
 face-recognition
 face-recognition-models
-pbjson
+imutils
+
+google
+protobuf
