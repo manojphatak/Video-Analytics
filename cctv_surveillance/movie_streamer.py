@@ -71,14 +71,6 @@ class MovieStreamer(KafkaProducer):
             _= os.path.split(movie)[1]
             fname= os.path.splitext(_)[0]
             for frame in self.read_movie(movie):
-                #-------------------------------
-                """ msg = FrameData()
-                msg.raw_frame = {
-                    "image_bytes": frame.tobytes(),
-                    "movie_filepath": movie,
-                    "movie_filename": fname
-                } """
-                #-------------------------------
                 msg = KafkaMsg.Frame()
                 raw_frame = KafkaMsg.Frame.RawFrame()
                 raw_frame.movie_filename= fname

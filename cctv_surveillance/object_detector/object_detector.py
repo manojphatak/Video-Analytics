@@ -152,15 +152,18 @@ class ObjectDetector(KafkaStreamingConsumer):
 
 
     def handle_msg(self, msg):   
-        frame = self._get_frame_from_imagedata(msg.raw_frame["image_bytes"])
+        frame = self._get_frame_from_imagedata(msg.raw_frame.image_bytes)
         objects, anotated_image = self.detect_objects(frame)
         
         if objects:
+            # write annotated frame to jpg file
             fname = f"{self._frameid}.jpg"
-            outdir = os.path.join(OUTDIR, msg.raw_frame["movie_filename"])
+            outdir = os.path.join(OUTDIR, msg.raw_frame.movie_filename)
             ensure_dir_path(outdir)
             cv2.imwrite(os.path.join(outdir, fname), anotated_image)
-            msg.labels = objects
+
+            # update the kafka message
+            msg.objects.extend(objects)
             yield (True, msg)     # forward the same frame for further processing, if the motion is detected
 
 

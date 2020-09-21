@@ -12,11 +12,13 @@ message Frame {
         bytes image_bytes = 3;
     }
 
-    float t_created = 1;
-    float t_updated = 2;
-    repeated bytes faces = 4;
-    repeated string matched_faces = 5;
+    RawFrame raw_frame = 1;
+    float t_created = 2;
+    float t_updated = 3;
+
+    repeated string objects = 4;
+    repeated bytes faces = 5;
+    repeated string matched_faces = 6;
     
-    RawFrame raw_frame = 6;
 }
 
