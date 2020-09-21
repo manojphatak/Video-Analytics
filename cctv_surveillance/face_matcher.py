@@ -5,6 +5,7 @@ import fnmatch
 
 import cv2
 import face_recognition
+import numpy as np
 from pipe import Pipe, select, where
 
 currdir = os.path.dirname(__file__)
@@ -70,11 +71,14 @@ class FaceMatcher(KafkaStreamingConsumer):
     def handle_msg(self, msg):
         matches = []
         for new_face in msg.faces:
+            # Converting byte format back to NumPy array
+            new_face = np.frombuffer(new_face)
+            logger.debug(f"type of new_face: {type(new_face)}")
             matches.extend(self.match_faces(new_face, self.known_faces, self.match_tol))
 
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
-            msg.matched_faces = titles
+            msg.matched_faces.extend(titles)
             logger.debug(f"match found: {titles}")
             yield True, msg
         else:

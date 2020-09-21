@@ -23,7 +23,7 @@ class FilesystemConsumer(KafkaEndConsumer):
         matches= set(msg.matched_faces)
         if matches.difference(self.discovered):     # new matches discovered    
             self.discovered = self.discovered.union(set(matches))
-            save_image_data_to_jpg(msg.raw_frame["image_bytes"], self.out_fileloc)  # save this image somewhere for ref
+            save_image_data_to_jpg(msg.raw_frame.image_bytes, self.out_fileloc)  # save this image somewhere for ref
             logger.debug(f"frame processing time = {msg.t_updated - msg.t_created}")
             logger.debug(f"discovered so far... {self.discovered}")
 

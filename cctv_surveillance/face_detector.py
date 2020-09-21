@@ -25,12 +25,14 @@ class FaceDetector(KafkaStreamingConsumer):
 
         
     def update_out_msg(self, msg, face_encodings):
-        msg.faces = face_encodings
+        # convert numpy.ndarray to bytes, which is required by the protobuf data structure
+        faces_encods_bytes = map(lambda e: e.tobytes(), face_encodings)  
+        msg.faces.extend(list(faces_encods_bytes))
         return msg    
 
 
     def handle_msg(self, msg):
-        face_encodings= self.detect_face(msg.raw_frame["image_bytes"])
+        face_encodings= self.detect_face(msg.raw_frame.image_bytes)
         if face_encodings:
             logger.debug("detected a face... sending to kafka topic...")
             msg = self.update_out_msg(msg, face_encodings)
