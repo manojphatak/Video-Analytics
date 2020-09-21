@@ -18,9 +18,12 @@ class KafkaCli:
                  topic
     ):
         def deserialize_msg(m):
+            # instantiate empty message
             msg = KafkaMsg.Frame()
             raw_frame = KafkaMsg.Frame.RawFrame()
             msg.raw_frame.CopyFrom(raw_frame)
+
+            # deserialize
             msg.ParseFromString(m)
             return msg
 
@@ -28,8 +31,6 @@ class KafkaCli:
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
 
-        #self.value_serializer=lambda m: pickle.dumps(m)
-        #self.value_deserializer=lambda m: pickle.loads(m)
         self.value_serializer= lambda m: m.SerializeToString()
         self.value_deserializer= lambda m: deserialize_msg(m)
        
