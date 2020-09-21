@@ -26,7 +26,7 @@ from cctv_surveillance.kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
 from cctv_surveillance.kafka_base_consumer import KafkaStreamingConsumer
-from cctv_surveillance.framedata import FrameData
+
 
 OUTDIR = "/usr/app/out/ObjectDetector"
 

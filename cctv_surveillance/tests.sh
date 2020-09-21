@@ -8,7 +8,7 @@ then
     echo -e "No or invalid argument for startup-time for services. Assuming it to be 25 secs"
     WAIT_FOR_SERVICES=25
 fi
-echo -e "Time to allow services to start consuming: $WAIT_FOR_SERVICES seconds"
+echo -e "test asserts will be run $WAIT_FOR_SERVICES seconds after services are started"
 
 
 GREEN="\e[1;32m"

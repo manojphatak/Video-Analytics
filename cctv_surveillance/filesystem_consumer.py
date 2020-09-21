@@ -7,8 +7,6 @@ sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData
-
 from kafka_base_consumer import KafkaEndConsumer
 
 

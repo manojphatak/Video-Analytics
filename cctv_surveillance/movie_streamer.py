@@ -12,7 +12,6 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 from kafka_producer import KafkaProducer
-from framedata import FrameData
 import kafka_message_pb2 as KafkaMsg
 
 
