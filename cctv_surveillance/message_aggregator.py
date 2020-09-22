@@ -6,24 +6,27 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from cctv_surveillance.appcommon import init_logger
 from kafka_base_consumer import KafkaEndConsumer
 
 
 class MessageAggregator(KafkaEndConsumer):
     def __init__(self):
-        self.discovered = set([])
-        self.out_fileloc = os.environ.get("OUTPUT_FILE_LOCATION", "")
+        self.discovered_faces = set([])
+        self.discovered_objects = set([])
         super().__init__()
         
     
     def handle_msg(self, msg):
-        matches= set(msg.matched_faces)
-        if matches.difference(self.discovered):     # new matches discovered    
-            self.discovered = self.discovered.union(set(matches))
-            save_image_data_to_jpg(msg.raw_frame.image_bytes, self.out_fileloc)  # save this image somewhere for ref
-            logger.debug(f"frame processing time = {msg.t_updated - msg.t_created}")
-            logger.debug(f"discovered so far... {self.discovered}")
+        self.discovered_faces = self.discovered_faces.union(set(msg.matched_faces))
+        logger.debug(f"discovered faces... {self.discovered_faces}")
+
+        # sample contents of msg.objects: ["person: 0.99", "cat: 0.98"]
+        # drop the confidense number & extract inly the objects i.e. person, cat etc
+        objects = map(lambda x: x.split(":")[0], msg.objects)
+        
+        self.discovered_objects = self.discovered_objects.union(set(objects))
+        logger.debug(f"discovered objects... {self.discovered_objects}")
 
 
 

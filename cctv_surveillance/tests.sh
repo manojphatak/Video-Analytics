@@ -54,5 +54,6 @@ CheckService "motion-detector" "detected contour of size"
 CheckService "object-detector" "text: person:" 
 CheckService "face-detector" "detected a face" 
 CheckService "face-matcher" "match found" 
-CheckService "message-aggregator" "discovered so far... {" 
+CheckService "message-aggregator" "discovered faces... {"
+CheckService "message-aggregator" "discovered objects... {'person', 'refrigerator'}" 
 
