@@ -74,7 +74,7 @@ services:
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.faces-detected
-      OUTPUT_TOPIC: transactions.matched-faces
+      OUTPUT_TOPIC: cctv.matched-faces
       FACE_DATABASE: ${DOCKER_HOME}/faces
       FACE_MATCH_TOL: 0.6
     volumes:
@@ -84,18 +84,18 @@ services:
     entrypoint: ["python3", "face_matcher.py"]    
 
 
-  filesystem-consumer:
+  message-aggregator:
     build: .
-    container_name: filesystem-consumer
+    container_name: message-aggregator
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.matched-faces
+      INPUT_TOPIC: cctv.matched-faces
       OUTPUT_FILE_LOCATION: /tmp
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:/tmp  
     working_dir: ${DOCKER_CODE}/cctv_surveillance
-    entrypoint: ["python3", "filesystem_consumer.py"]  
+    entrypoint: ["python3", "message_aggregator.py"]  
     
 
 

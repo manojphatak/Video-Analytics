@@ -10,7 +10,7 @@ from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
 from kafka_base_consumer import KafkaEndConsumer
 
 
-class FilesystemConsumer(KafkaEndConsumer):
+class MessageAggregator(KafkaEndConsumer):
     def __init__(self):
         self.discovered = set([])
         self.out_fileloc = os.environ.get("OUTPUT_FILE_LOCATION", "")
@@ -29,6 +29,6 @@ class FilesystemConsumer(KafkaEndConsumer):
 
 if __name__== "__main__":
     logger = init_logger(__file__)
-    logger.debug("------------start: inside filesystem-consumer...----------------------------")
-    FilesystemConsumer()
+    logger.debug("------------start: inside message-aggregator...----------------------------")
+    MessageAggregator()
     
