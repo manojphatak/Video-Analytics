@@ -53,7 +53,7 @@ class KafkaCli:
             pass  # ignore
 
 
-    def send_message(self, value, key=None):
+    def send_message(self, value, key):
         producer = KafkaProducer(
             value_serializer= self.value_serializer,
             key_serializer= str.encode if key else None,
@@ -70,6 +70,7 @@ class KafkaCli:
                                       enable_auto_commit= True,  # make this to False, if we want to consume from begining
                                       group_id= self.consumer_group_id,
                                       value_deserializer= self.value_deserializer,
+                                      key_deserializer= lambda k: k.decode() if k else None,
                                       bootstrap_servers= self.bootstrap_servers,
                                       # StopIteration if no message after time in millisec
                                       consumer_timeout_ms=self.stop_iteration_timeout

@@ -56,7 +56,7 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
             for (status, outmsg) in handler(m.value):
                 if status:
                     outmsg.t_updated = datetime.datetime.now().timestamp()   #todo: check if protobuf has type for timestamp
-                    kafkaProducer.send_message(outmsg)     
+                    kafkaProducer.send_message(value= outmsg, key= m.key)     
 
 
 class KafkaEndConsumer(KafkaBaseConsumer):
