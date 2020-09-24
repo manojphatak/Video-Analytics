@@ -22,6 +22,8 @@ services:
     volumes:
      - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
+     - /etc/timezone:/etc/timezone:ro
+     - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
@@ -37,6 +39,8 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "motion_detector.py"]  
 
@@ -51,6 +55,8 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/object_detector
     entrypoint: ["python3", "object_detector.py"]    
 
@@ -64,6 +70,8 @@ services:
       OUTPUT_TOPIC: cctv.faces-detected
     volumes:
       - ../:${DOCKER_SANDBOX}  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "face_detector.py"]  
 
@@ -80,6 +88,8 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - known-faces:${DOCKER_HOME}/faces  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "face_matcher.py"]    
 
@@ -94,6 +104,8 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:/tmp  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "message_aggregator.py"]  
     
