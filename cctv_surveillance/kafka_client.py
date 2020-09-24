@@ -38,6 +38,7 @@ class KafkaCli:
         self.consumer_group_id = "1"
 
         self.create_topic(topic)
+        self.group_id_for_testing = "testing"
         
 
     def create_topic(self, topic):
@@ -65,16 +66,22 @@ class KafkaCli:
 
 
     def register_consumer(self):
+        test_mode= bool(os.environ.get("TEST_MODE",False))
+        logger.debug(f"TEST_MODE= {test_mode}")
+        print(f"TEST_MODE= {test_mode}")
+        group_id = self.group_id_for_testing if test_mode else self.consumer_group_id
+        enable_auto_commit = False if test_mode else True
+        
         self.consumer = KafkaConsumer(self.topic,
                                       auto_offset_reset= 'earliest',
-                                      enable_auto_commit= True,  # make this to False, if we want to consume from begining
-                                      group_id= self.consumer_group_id,
+                                      enable_auto_commit= enable_auto_commit,  # make this to False, if we want to consume from begining
+                                      group_id= group_id,
                                       value_deserializer= self.value_deserializer,
                                       key_deserializer= lambda k: k.decode() if k else None,
                                       bootstrap_servers= self.bootstrap_servers,
                                       # StopIteration if no message after time in millisec
                                       consumer_timeout_ms=self.stop_iteration_timeout
-                                      )
+                        )
 
     def consume_messages(self):
         for m in self.consumer:

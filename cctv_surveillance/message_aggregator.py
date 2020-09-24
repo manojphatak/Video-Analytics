@@ -14,19 +14,30 @@ class MessageAggregator(KafkaEndConsumer):
     def __init__(self):
         self.discovered_faces = set([])
         self.discovered_objects = set([])
+        self.agg = {
+            
+        }
         super().__init__()
         
     
     def handle_msg(self, msg):
-        self.discovered_faces = self.discovered_faces.union(set(msg.matched_faces))
-        logger.debug(f"discovered faces... {self.discovered_faces}")
+        if msg.raw_frame.movie_filename not in self.agg.keys():
+            self.agg[msg.raw_frame.movie_filename] = {
+            "faces": set([]),
+            "objects": set([]),
+        }
 
+        aggs = self.agg[msg.raw_frame.movie_filename]
+        aggs["faces"].update(msg.matched_faces)
+        
         # sample contents of msg.objects: ["person: 0.99", "cat: 0.98"]
         # drop the confidense number & extract inly the objects i.e. person, cat etc
         objects = map(lambda x: x.split(":")[0], msg.objects)
+        aggs["objects"].update(objects)
+
+        logger.debug(f"aggregation: f{self.agg}")
+        logger.debug(f"Num of faces: {len(aggs['faces'])}, Num of objects: {len(aggs['objects'])}")
         
-        self.discovered_objects = self.discovered_objects.union(set(objects))
-        logger.debug(f"discovered objects... {self.discovered_objects}")
 
 
 
