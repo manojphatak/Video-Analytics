@@ -55,7 +55,7 @@ class MovieStreamer(KafkaProducer):
             logger.debug(f"got frame id# {frameid} of {totalframes}, at approx {int(frameid/fps)} secs")    
 
             # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-            frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
+            #frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
 
             ret, buffer = cv2.imencode('.jpg', frame)
             yield buffer
