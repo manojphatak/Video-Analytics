@@ -82,7 +82,7 @@ class FaceMatcher(KafkaStreamingConsumer):
             yield True, msg
         else:
             logger.debug("New face found. Updating the database...")
-            save_image_data_to_jpg(msg.raw_frame["image_bytes"], outpath= self.face_database)
+            save_image_data_to_jpg(msg.raw_frame.image_bytes, outpath= self.face_database)
             self.known_faces = self.load_known_faces()
 
 
