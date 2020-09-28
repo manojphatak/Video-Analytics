@@ -159,7 +159,7 @@ B[motion-detector] -- enriched frames --> C[face-detector]
 
 C[face-detector] -- frames --> D[face-matcher]
 
-D[face-matcher] -- frames --> E[filesystem-consumer]
+D[face-matcher] -- frames --> E[message-aggregator]
 
 ```
 

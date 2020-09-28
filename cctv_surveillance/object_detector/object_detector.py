@@ -22,24 +22,19 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,"..", ".."))
 sys.path.append(os.path.join(currdir,".."))
 
-from cctv_surveillance.kafka_client import KafkaImageCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from cctv_surveillance.kafka_client import KafkaCli
+from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
 from cctv_surveillance.kafka_base_consumer import KafkaStreamingConsumer
-from cctv_surveillance.framedata import FrameData
 
+
+OUTDIR = "/usr/app/out/ObjectDetector"
 
 class ObjectDetector(KafkaStreamingConsumer):
     def __init__(self):
         self.confidence = float(os.environ.get("CONFIDENCE", 0.5))
         self.threshold = float(os.environ.get("THRESHOLD", 0.3))
         super().__init__()
-
-
-    def get_random_filename(self, prefix):
-        letters = ["unknown-"] +  [random.choice(string.ascii_lowercase) for i in range(5)]
-        fname = "".join(letters)
-        return f"{prefix}_{fname}.jpg"
 
 
     def _get_frame_from_imagedata(self, imagedata):
@@ -157,13 +152,18 @@ class ObjectDetector(KafkaStreamingConsumer):
 
 
     def handle_msg(self, msg):   
-        frame = self._get_frame_from_imagedata(msg.raw_frame)
+        frame = self._get_frame_from_imagedata(msg.raw_frame.image_bytes)
         objects, anotated_image = self.detect_objects(frame)
         
         if objects:
-            fname = self.get_random_filename(prefix= "objects")
-            cv2.imwrite(os.path.join("/usr/app/out", fname), anotated_image)
-            msg.labels = objects
+            # write annotated frame to jpg file
+            fname = f"{self._frameid}.jpg"
+            outdir = os.path.join(OUTDIR, msg.raw_frame.movie_filename)
+            ensure_dir_path(outdir)
+            cv2.imwrite(os.path.join(outdir, fname), anotated_image)
+
+            # update the kafka message
+            msg.objects.extend(objects)
             yield (True, msg)     # forward the same frame for further processing, if the motion is detected
 
 
@@ -184,4 +184,5 @@ def test_for_object_detector():
 if __name__== "__main__":
     logger = init_logger(__file__)
     logger.debug("------------start: inside object-detector...----------------------------")
+    ensure_dir_path(OUTDIR)
     ObjectDetector()

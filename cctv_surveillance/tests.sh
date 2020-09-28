@@ -2,7 +2,14 @@
 
 # time in secs
 WAIT_FOR_SERVICES=$1
-echo -e "Time to allow services to start consuming: $WAIT_FOR_SERVICES seconds"
+
+if ! [[ "$WAIT_FOR_SERVICES" =~ "^[0-9]+$" ]]
+then
+    echo -e "No or invalid argument for startup-time for services. Assuming it to be 25 secs"
+    WAIT_FOR_SERVICES=25
+fi
+echo -e "test asserts will be run $WAIT_FOR_SERVICES seconds after services are started"
+
 
 GREEN="\e[1;32m"
 RED="\e[1;31m"
@@ -47,5 +54,8 @@ CheckService "motion-detector" "detected contour of size"
 CheckService "object-detector" "text: person:" 
 CheckService "face-detector" "detected a face" 
 CheckService "face-matcher" "match found" 
-CheckService "filesystem-consumer" "discovered so far... {" 
+CheckService "message-aggregator" "Num of faces: 1, Num of objects: 2" 
+CheckService "message-aggregator" "person" 
+CheckService "message-aggregator" "refrigerator" 
+
 

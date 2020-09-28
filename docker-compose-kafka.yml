@@ -32,9 +32,12 @@ services:
     restart: "no"
     ports:
       - "9000:9000"
+    volumes:
+      - ./cctv_surveillance:/var/protobuf_desc
     environment:
       KAFKA_BROKERCONNECT: "kafka:29092"
-      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+      JVM_OPTS: "-Xms512M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+      CMD_ARGS: "--message.format=PROTOBUF --protobufdesc.directory=/var/protobuf_desc"
     depends_on:
       - "kafka" 
       

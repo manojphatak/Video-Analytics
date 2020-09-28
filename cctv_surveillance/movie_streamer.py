@@ -9,10 +9,10 @@ import cv2
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 from kafka_producer import KafkaProducer
-from framedata import FrameData
+import kafka_message_pb2 as KafkaMsg
 
 
 class MovieStreamer(KafkaProducer):
@@ -55,7 +55,7 @@ class MovieStreamer(KafkaProducer):
             logger.debug(f"got frame id# {frameid} of {totalframes}, at approx {int(frameid/fps)} secs")    
 
             # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
-            frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
+            #frame = frame[:, :, ::-1]    #TODO: This should be moved to consumer    
 
             ret, buffer = cv2.imencode('.jpg', frame)
             yield buffer
@@ -67,10 +67,19 @@ class MovieStreamer(KafkaProducer):
         
         st_time = time.time()
         for movie in self.get_movie_files():
+            _= os.path.split(movie)[1]
+            fname= os.path.splitext(_)[0]
             for frame in self.read_movie(movie):
-                msg = FrameData()
-                msg.raw_frame= frame.tobytes()
-                self.send_message(msg)
+                msg = KafkaMsg.Frame()
+                raw_frame = KafkaMsg.Frame.RawFrame()
+                raw_frame.movie_filename= fname
+                raw_frame.movie_filepath= movie
+                raw_frame.image_bytes= frame.tobytes()
+                msg.raw_frame.CopyFrom(raw_frame)
+                
+                #-------------------------------
+                self.send_message(key= fname, value= msg)
+
         end_time = time.time()
         logger.debug(f"---------------- Done: In {(end_time-st_time)/60} minutes --------------------")
     

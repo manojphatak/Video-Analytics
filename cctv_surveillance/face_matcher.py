@@ -5,14 +5,14 @@ import fnmatch
 
 import cv2
 import face_recognition
+import numpy as np
 from pipe import Pipe, select, where
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData
 from kafka_base_consumer import KafkaStreamingConsumer
 
 @Pipe
@@ -70,16 +70,19 @@ class FaceMatcher(KafkaStreamingConsumer):
     def handle_msg(self, msg):
         matches = []
         for new_face in msg.faces:
+            # Converting byte format back to NumPy array
+            new_face = np.frombuffer(new_face)
+            logger.debug(f"type of new_face: {type(new_face)}")
             matches.extend(self.match_faces(new_face, self.known_faces, self.match_tol))
 
         if matches:
             titles= matches | select(lambda m: m["name"]) | tolist
-            msg.matched_faces = titles
+            msg.matched_faces.extend(titles)
             logger.debug(f"match found: {titles}")
             yield True, msg
         else:
             logger.debug("New face found. Updating the database...")
-            save_image_data_to_jpg(msg.raw_frame, outpath= self.face_database)
+            save_image_data_to_jpg(msg.raw_frame.image_bytes, outpath= self.face_database)
             self.known_faces = self.load_known_faces()
 
 
