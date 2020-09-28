@@ -13,7 +13,7 @@ services:
 
   movie-feeder:
     build: .
-    container_name: movie-feeder
+    #container_name: movie-feeder
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: cctv.raw-frames
@@ -31,7 +31,7 @@ services:
 
   motion-detector:
     build: .  
-    container_name: motion-detector
+    #container_name: motion-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.raw-frames
@@ -47,7 +47,7 @@ services:
 
   object-detector:
     build: .  
-    container_name: object-detector
+    #container_name: object-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.motion-detected
@@ -63,7 +63,7 @@ services:
 
   face-detector:
     build: .
-    container_name: face-detector
+    #container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.object-detected
@@ -78,7 +78,7 @@ services:
 
   face-matcher:
     build: .
-    container_name: face-matcher
+    #container_name: face-matcher
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.faces-detected
@@ -96,7 +96,7 @@ services:
 
   message-aggregator:
     build: .
-    container_name: message-aggregator
+    #container_name: message-aggregator
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.matched-faces
