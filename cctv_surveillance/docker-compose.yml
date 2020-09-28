@@ -1,82 +1,113 @@
 version: '3'
 
-# Note: Be sure to setup the env variable "VIDEO_ANALYTICS_DATA" pointing to host file system
+# Note: Be sure to setup the env variable "MOVIE_FILES" pointing to host file system
+
+volumes:
+  results:
+    driver: local
+  known-faces:
+    driver: local  
+
 
 services:
 
   movie-feeder:
     build: .
-    container_name: movie-feeder
+    #container_name: movie-feeder
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      TRANSACTIONS_TOPIC: queueing.raw-frames
+      TRANSACTIONS_TOPIC: cctv.raw-frames
       FRAME_CAPTURE_PERIOD: 1                           # Capture frame at every 'n' seconds
-      MOVIE_FILES_SOURCE: "/usr/app/movies"
-
+      MOVIE_FILES: ${DOCKER_HOME}/movies
     volumes:
-     - ..:/usr/app/sandbox                              # this is for testing the code before commit
-     - ${VIDEO_ANALYTICS_DATA}/movies:/usr/app/movies
-    working_dir: /usr/app/sandbox/cctv_surveillance
+     - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
+     - ${MOVIE_FILES}:${DOCKER_HOME}/movies
+     - /etc/timezone:/etc/timezone:ro
+     - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
   
 
   motion-detector:
     build: .  
-    container_name: motion-detector
+    #container_name: motion-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: queueing.raw-frames
-      OUTPUT_TOPIC: transactions.motion
+      INPUT_TOPIC: cctv.raw-frames
+      OUTPUT_TOPIC: cctv.motion-detected
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/transient-data:/usr/app/temp
-      - ${VIDEO_ANALYTICS_DATA}/output:/usr/app/out
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ../:${DOCKER_SANDBOX}  
+      - results:${DOCKER_HOME}/out
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "motion_detector.py"]  
+
+
+  object-detector:
+    build: .  
+    #container_name: object-detector
+    environment:
+      KAFKA_BROKER_URL: kafka:29092
+      INPUT_TOPIC: cctv.motion-detected
+      OUTPUT_TOPIC: cctv.object-detected
+    volumes:
+      - ../:${DOCKER_SANDBOX}  
+      - results:${DOCKER_HOME}/out
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/object_detector
+    entrypoint: ["python3", "object_detector.py"]    
 
 
   face-detector:
     build: .
-    container_name: face-detector
+    #container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.motion
-      OUTPUT_TOPIC: transactions.faces
+      INPUT_TOPIC: cctv.object-detected
+      OUTPUT_TOPIC: cctv.faces-detected
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/transient-data:/tmp  
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ../:${DOCKER_SANDBOX}  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "face_detector.py"]  
 
 
   face-matcher:
     build: .
-    container_name: face-matcher
+    #container_name: face-matcher
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.faces
-      OUTPUT_TOPIC: transactions.matched-faces
-      FACE_DATABASE: /tmp/faces
+      INPUT_TOPIC: cctv.faces-detected
+      OUTPUT_TOPIC: cctv.matched-faces
+      FACE_DATABASE: ${DOCKER_HOME}/faces
       FACE_MATCH_TOL: 0.6
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/known-faces:/tmp/faces  
-    working_dir: /usr/app/sandbox/cctv_surveillance
+      - ../:${DOCKER_SANDBOX}  
+      - known-faces:${DOCKER_HOME}/faces  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "face_matcher.py"]    
 
 
-  filesystem-consumer:
+  message-aggregator:
     build: .
-    container_name: filesystem-consumer
+    #container_name: message-aggregator
     environment:
       KAFKA_BROKER_URL: kafka:29092
-      INPUT_TOPIC: transactions.matched-faces
+      INPUT_TOPIC: cctv.matched-faces
       OUTPUT_FILE_LOCATION: /tmp
     volumes:
-      - ..:/usr/app/sandbox  
-      - ${VIDEO_ANALYTICS_DATA}/output:/tmp  
-    working_dir: /usr/app/sandbox/cctv_surveillance
-    entrypoint: ["python3", "filesystem_consumer.py"]  
+      - ../:${DOCKER_SANDBOX}  
+      - results:/tmp  
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    entrypoint: ["python3", "message_aggregator.py"]  
     
 
 

@@ -1,20 +1,24 @@
 import os
 import sys
 import logging
+import datetime
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
+from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
+
+import kafka_message_pb2 as KafkaMsg
 
 logger = init_logger(__file__)
 
 class KafkaBaseConsumer:
     def __init__(self):
         self.env = self.get_environ()
+        self._frameid = -1
         self.consume_kafka_topic(handler= self.handle_msg)
-        
+                
 
     def get_environ(self) -> dict:
         return {
@@ -27,10 +31,9 @@ class KafkaBaseConsumer:
     def get_kafka_cli(self, clitype):
         topic_mapping= {"producer": self.env["out_topic"], "consumer": self.env["in_topic"]} #todo: use enum instead of string
         assert clitype in topic_mapping, "incorrect kafka client requested. It has to be either producer or consumer"
-        return KafkaImageCli(
+        return KafkaCli(
             bootstrap_servers= [self.env["kafka_endpt"]],
-            topic= topic_mapping[clitype],
-            stop_iteration_timeout= sys.maxsize
+            topic= topic_mapping[clitype]
         )    
     
     def handle_msg(self, msg):
@@ -49,9 +52,11 @@ class KafkaStreamingConsumer(KafkaBaseConsumer):
 
         for m in kafkaConsumer.consumer:
             logger.debug("received message from Kafka") 
+            self._frameid += 1
             for (status, outmsg) in handler(m.value):
                 if status:
-                    kafkaProducer.send_message(outmsg)     
+                    outmsg.t_updated = datetime.datetime.now().timestamp()   #todo: check if protobuf has type for timestamp
+                    kafkaProducer.send_message(value= outmsg, key= m.key)     
 
 
 class KafkaEndConsumer(KafkaBaseConsumer):
@@ -64,4 +69,5 @@ class KafkaEndConsumer(KafkaBaseConsumer):
         logger.debug("polling kafka topic now...")
         for m in kafkaConsumer.consumer:
             logger.debug("received message from Kafka") 
+            self._frameid += 1
             handler(m.value)

@@ -8,7 +8,6 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
 from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from framedata import FrameData
 from kafka_base_consumer import KafkaStreamingConsumer
 
 class FaceDetector(KafkaStreamingConsumer):
@@ -23,21 +22,20 @@ class FaceDetector(KafkaStreamingConsumer):
         os.remove(tempjpg)
         return face_encodings
 
-
-    def create_out_msg(self, imagedata, encod):
-        return FrameData(
-                        id = encod.data.tobytes(), # hash of the encoding matrix: to serve as primary key
-                        imagedata = imagedata,
-                        encod = encod
-        )
         
+    def update_out_msg(self, msg, face_encodings):
+        # convert numpy.ndarray to bytes, which is required by the protobuf data structure
+        faces_encods_bytes = map(lambda e: e.tobytes(), face_encodings)  
+        msg.faces.extend(list(faces_encods_bytes))
+        return msg    
+
 
     def handle_msg(self, msg):
-        face_encodings= self.detect_face(msg)
-        for encod in face_encodings:
+        face_encodings= self.detect_face(msg.raw_frame.image_bytes)
+        if face_encodings:
             logger.debug("detected a face... sending to kafka topic...")
-            outmsg= self.create_out_msg(msg, encod)
-            yield True, outmsg
+            msg = self.update_out_msg(msg, face_encodings)
+            yield True, msg
 
    
 

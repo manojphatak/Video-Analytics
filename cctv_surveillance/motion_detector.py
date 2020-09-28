@@ -1,3 +1,10 @@
+'''
+CREDITS: This code is copied & then modified from:
+Original Author: Adrian Rosebrock
+Blog: Basic Motion detection and tracking with Python and OpenCV
+URL: https://www.pyimagesearch.com/2015/05/25/basic-motion-detection-and-tracking-with-python-and-opencv/
+'''
+
 import os
 import sys
 import logging
@@ -12,17 +19,19 @@ import face_recognition
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaImageCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
+from kafka_client import KafkaCli
+from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
 from kafka_base_consumer import KafkaStreamingConsumer
+import kafka_message_pb2 as KafkaMsg
 
+OUTDIR = "/usr/app/out/MotionDetector"
 
 
 class MotionDetector(KafkaStreamingConsumer):
     def __init__(self):
         #todo: move following variables to docker-compose as env
-        self.avg = None
+        self.avg = {}
         self.min_area = 12000
         self.delta_thresh = 5
         self.frame_id = 0
@@ -36,32 +45,40 @@ class MotionDetector(KafkaStreamingConsumer):
         return frame
 
 
-    def detect_motion(self, imagedata) -> bool:
+    def _write_frame_to_file(self,frame, msg):
+        outdir = os.path.join(OUTDIR, msg.raw_frame.movie_filename)
+        ensure_dir_path(outdir)
+        outfile= os.path.join(outdir, f"{self._frameid}.jpg") 
+        cv2.imwrite(outfile,frame)
+        
+
+
+    def detect_motion(self, msg) -> bool:
         '''
         returns True if motion is detected w.r.t. baseline frmes, otherwise False
         '''
+        imagedata =  msg.raw_frame.image_bytes
+        moviefile = msg.raw_frame.movie_filename
         self.frame_id += 1
-        logger.debug(f"working on frame: {self.frame_id}")
+        logger.debug(f"working on frame: {self.frame_id}, movie file: {moviefile}")
 
         frame = self._get_frame_from_imagedata(imagedata)
 
         # resize the frame, convert it to grayscale, and blur it
         frame = imutils.resize(frame, width=500)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #gray = cv2.GaussianBlur(gray, (21, 21), 0)
+        gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
         # if the average frame is None, initialize it
-        if self.avg is None:
-            self.avg = gray.copy().astype("float")
+        if not moviefile in self.avg:
+            self.avg[moviefile] = gray.copy().astype("float")
             return False
-
-        logger.debug("checking the next frame...")
 
         # accumulate the weighted average between the current frame and
         # previous frames, then compute the difference between the current
         # frame and running average
-        cv2.accumulateWeighted(gray, self.avg, 0.5)
-        frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(self.avg))
+        cv2.accumulateWeighted(gray, self.avg[moviefile], 0.5)
+        frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(self.avg[moviefile]))
 
         # threshold the delta image, dilate the thresholded image to fill
         # in holes, then find contours on thresholded image
@@ -91,9 +108,7 @@ class MotionDetector(KafkaStreamingConsumer):
             return False
 
         if len(cnts) > 0:
-            fname = f"{self.frame_id}_{str(len(cnts))}_{str(max_contour_area)}.jpg"
-            outfile= os.path.join("/usr/app/out", fname)   #todo: use env instead of hardcoded path
-            cv2.imwrite(outfile,frame)
+            self._write_frame_to_file(frame, msg)
             return True
         else:
             return False
@@ -106,5 +121,6 @@ class MotionDetector(KafkaStreamingConsumer):
 
 if __name__== "__main__":
     logger = init_logger(__file__)
+    ensure_dir_path(OUTDIR)
     logger.debug("------------start: inside motion-detector...----------------------------")
     MotionDetector()   
