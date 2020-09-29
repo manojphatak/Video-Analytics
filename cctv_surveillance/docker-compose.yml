@@ -111,22 +111,18 @@ services:
 
   
   logstash:
-    #image: "docker.elastic.co/logstash/logstash:7.9.2"
     build:
       context: .
       dockerfile: Logstash.Dockerfile
     volumes:
       - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
       - ./kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
-      - ./codec/logstash-codec-protobuf-1.2.2.gem:/usr/share/logstash/logstash-codec-protobuf-1.2.2.gem
     ports:
       - "5000:5000"
       - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx512m -Xms512m"
-    #command: logstash -f /usr/share/logstash/config/kafka-logstash.conf
-    command: tail -f /dev/null
-    tty: true
+    command: logstash -f /usr/share/logstash/config/kafka-logstash.conf
     depends_on:
       - elasticsearch    
     links:
