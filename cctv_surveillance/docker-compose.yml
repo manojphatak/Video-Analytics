@@ -108,7 +108,45 @@ services:
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance
     entrypoint: ["python3", "message_aggregator.py"]  
-    
+
+  
+  logstash:
+    #image: "docker.elastic.co/logstash/logstash:7.9.2"
+    build:
+      context: .
+      dockerfile: Logstash.Dockerfile
+    volumes:
+      - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
+      - ./kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
+      - ./codec/logstash-codec-protobuf-1.2.2.gem:/usr/share/logstash/logstash-codec-protobuf-1.2.2.gem
+    ports:
+      - "5000:5000"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx512m -Xms512m"
+    #command: logstash -f /usr/share/logstash/config/kafka-logstash.conf
+    command: tail -f /dev/null
+    tty: true
+    depends_on:
+      - elasticsearch    
+    links:
+      - elasticsearch    
+      
+  
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    #container_name: elasticsearch
+    environment:
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - "discovery.type=single-node"
+        - "xpack.security.enabled=false"
+    ports:
+      -   "9200:9200"
+      -   "9300:9300"
+    healthcheck:
+      test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
+   
 
 
 networks:
