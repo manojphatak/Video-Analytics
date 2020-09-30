@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import time
+import datetime
 from glob import glob
 
 import cv2
@@ -76,7 +77,7 @@ class MovieStreamer(KafkaProducer):
                 raw_frame.movie_filepath= movie
                 raw_frame.image_bytes= frame.tobytes()
                 msg.raw_frame.CopyFrom(raw_frame)
-                
+                msg.t_created = datetime.datetime.now().timestamp()
                 #-------------------------------
                 self.send_message(key= fname, value= msg)
 
