@@ -117,6 +117,8 @@ services:
     volumes:
       - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
       - ./kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - "5000:5000"
       - "9600:9600"
@@ -125,6 +127,7 @@ services:
     command: logstash -f /usr/share/logstash/config/kafka-logstash.conf
     depends_on:
       - elasticsearch    
+      - object-detector
     links:
       - elasticsearch    
       
@@ -140,6 +143,9 @@ services:
     ports:
       -   "9200:9200"
       -   "9300:9300"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     healthcheck:
       test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
    
