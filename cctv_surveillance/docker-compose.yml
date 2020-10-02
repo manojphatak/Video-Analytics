@@ -10,10 +10,8 @@ volumes:
 
 
 services:
-
   movie-feeder:
     build: .
-    #container_name: movie-feeder
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: cctv.raw-frames
@@ -31,7 +29,6 @@ services:
 
   motion-detector:
     build: .  
-    #container_name: motion-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.raw-frames
@@ -47,7 +44,6 @@ services:
 
   object-detector:
     build: .  
-    #container_name: object-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.motion-detected
@@ -63,7 +59,6 @@ services:
 
   face-detector:
     build: .
-    #container_name: face-detector
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.object-detected
@@ -78,7 +73,6 @@ services:
 
   face-matcher:
     build: .
-    #container_name: face-matcher
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.faces-detected
@@ -96,7 +90,6 @@ services:
 
   message-aggregator:
     build: .
-    #container_name: message-aggregator
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.matched-faces
@@ -135,12 +128,10 @@ services:
   
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
-    #container_name: elasticsearch
     environment:
         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
         - "discovery.type=single-node"
         - "xpack.security.enabled=false"
-        #- "path.repo=[\"/usr/share/elasticsearch\"]"
     ports:
       -   "9200:9200"
       -   "9300:9300"
