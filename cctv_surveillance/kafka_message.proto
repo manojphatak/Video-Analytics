@@ -2,7 +2,7 @@ syntax = "proto3";
 
 // Not necessary for Python but should still be declared to avoid name collisions 
 // in the Protocol Buffers namespace and non-Python languages
-package cctv;
+//package cctv;
 
 
 message Frame {
