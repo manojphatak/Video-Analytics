@@ -9,7 +9,7 @@ sys.path.append(os.path.join(currdir,".."))
 from kafka_client import KafkaCli
 from cctv_surveillance.appcommon import init_logger
 
-import kafka_message_pb2 as KafkaMsg
+import cctv_surveillance.protobuf.kafka_message_pb2 as KafkaMsg
 
 logger = init_logger(__file__)
 

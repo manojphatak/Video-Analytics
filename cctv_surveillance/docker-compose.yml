@@ -121,7 +121,7 @@ services:
       dockerfile: Logstash.Dockerfile
     volumes:
       - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
-      - ./kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
+      - ./protobuf/kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:

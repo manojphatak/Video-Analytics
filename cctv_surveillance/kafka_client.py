@@ -8,7 +8,7 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-import kafka_message_pb2 as KafkaMsg
+import cctv_surveillance.protobuf.kafka_message_pb2 as KafkaMsg
 
 logger = logging.getLogger("video_analytics")
 
