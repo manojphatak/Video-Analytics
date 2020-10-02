@@ -19,11 +19,11 @@ import face_recognition
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
+from common.kafka_client import KafkaCli
+from common.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
-from kafka_base_consumer import KafkaStreamingConsumer
-import cctv_surveillance.protobuf.kafka_message_pb2 as KafkaMsg
+from common.kafka_base_consumer import KafkaStreamingConsumer
+import protobuf.kafka_message_pb2 as KafkaMsg
 
 OUTDIR = "/usr/app/out/MotionDetector"
 

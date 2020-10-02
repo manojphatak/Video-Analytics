@@ -24,7 +24,7 @@ services:
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
      - /etc/timezone:/etc/timezone:ro
      - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
   
@@ -42,7 +42,7 @@ services:
       - results:${DOCKER_HOME}/out
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "motion_detector.py"]  
 
 
@@ -59,7 +59,7 @@ services:
       - results:${DOCKER_HOME}/out
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance/object_detector
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services/object_detector
     entrypoint: ["python3", "object_detector.py"]    
 
 
@@ -75,7 +75,7 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_detector.py"]  
 
 
@@ -94,7 +94,7 @@ services:
       - known-faces:${DOCKER_HOME}/faces  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_matcher.py"]    
 
 
@@ -111,7 +111,7 @@ services:
       - results:/tmp  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "message_aggregator.py"]  
 
   

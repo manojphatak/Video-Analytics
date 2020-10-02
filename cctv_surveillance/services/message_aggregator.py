@@ -5,9 +5,9 @@ import logging
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger
-from kafka_base_consumer import KafkaEndConsumer
+from common.kafka_client import KafkaCli
+from common.appcommon import init_logger
+from common.kafka_base_consumer import KafkaEndConsumer
 
 
 class MessageAggregator(KafkaEndConsumer):
