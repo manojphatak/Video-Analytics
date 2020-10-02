@@ -33,7 +33,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./cctv_surveillance:/var/protobuf_desc
+      - ./cctv_surveillance/protobuf:/var/protobuf_desc
     environment:
       KAFKA_BROKERCONNECT: "kafka:29092"
       JVM_OPTS: "-Xms512M -Xmx512M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
