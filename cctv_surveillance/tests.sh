@@ -35,7 +35,7 @@ CheckService() {
 docker-compose stop
 
 # Remove kafka topics related to our services (clean start)
-docker exec kafka bash ./remove_all_topics.sh
+docker-compose -f ../docker-compose-kafka.yml exec kafka bash ./remove_all_topics.sh
 
 # Clear prev logs in containers
 #sudo bash ./clear-services-logs.sh
