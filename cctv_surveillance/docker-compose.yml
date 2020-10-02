@@ -11,7 +11,9 @@ volumes:
 
 services:
   movie-feeder:
-    build: .
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: cctv.raw-frames
@@ -28,7 +30,9 @@ services:
   
 
   motion-detector:
-    build: .  
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.raw-frames
@@ -43,7 +47,9 @@ services:
 
 
   object-detector:
-    build: .  
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.motion-detected
@@ -58,7 +64,9 @@ services:
 
 
   face-detector:
-    build: .
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.object-detected
@@ -72,7 +80,9 @@ services:
 
 
   face-matcher:
-    build: .
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.faces-detected
@@ -89,7 +99,9 @@ services:
 
 
   message-aggregator:
-    build: .
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.matched-faces
@@ -105,7 +117,7 @@ services:
   
   logstash:
     build:
-      context: .
+      context: ./Dockerfiles
       dockerfile: Logstash.Dockerfile
     volumes:
       - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  

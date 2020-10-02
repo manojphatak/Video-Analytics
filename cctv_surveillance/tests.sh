@@ -5,8 +5,8 @@ WAIT_FOR_SERVICES=$1
 
 if ! [[ "$WAIT_FOR_SERVICES" =~ "^[0-9]+$" ]]
 then
-    echo -e "No or invalid argument for startup-time for services. Assuming it to be 25 secs"
-    WAIT_FOR_SERVICES=25
+    echo -e "No or invalid argument for startup-time for services. Assuming it to be 30 secs"
+    WAIT_FOR_SERVICES=30
 fi
 echo -e "test asserts will be run $WAIT_FOR_SERVICES seconds after services are started"
 
