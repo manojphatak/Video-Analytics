@@ -3,7 +3,9 @@
 # time in secs
 WAIT_FOR_SERVICES=$1
 
-if ! [[ "$WAIT_FOR_SERVICES" =~ "^[0-9]+$" ]]
+[[ $1 == ?(-)+([0-9]) ]] 
+
+if ! [[ $WAIT_FOR_SERVICES == ?(-)+([0-9]) ]];
 then
     echo -e "No or invalid argument for startup-time for services. Assuming it to be 30 secs"
     WAIT_FOR_SERVICES=30
