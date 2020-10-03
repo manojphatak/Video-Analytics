@@ -4,6 +4,11 @@ syntax = "proto3";
 // in the Protocol Buffers namespace and non-Python languages
 //package cctv;
 
+//Note:
+//1. Make sure to run "compile_protobuf.sh" for any change in this .proto file
+//2. The line "package xxx" above is commented out. This is because for a strange reason as it 
+//   breaks logstash. This is possibly due to the older version of protobuf used by the logstash image
+
 
 message Frame {
     message RawFrame {
