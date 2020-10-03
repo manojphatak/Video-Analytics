@@ -120,7 +120,7 @@ services:
       context: ./Dockerfiles
       dockerfile: Logstash.Dockerfile
     volumes:
-      - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
+      - ./config/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
       - ./protobuf/kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -148,7 +148,7 @@ services:
       -   "9200:9200"
       -   "9300:9300"
     volumes:
-      - ./conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     healthcheck:
