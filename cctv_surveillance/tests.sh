@@ -1,23 +1,30 @@
 #!/bin/bash
 
-# time in secs
-WAIT_FOR_SERVICES=$1
+echo "-----------------------------------------------"
+echo "These tests are temporary drop-in arrangement, till robust tests are authored"
+echo "the tests clean logs, topics from previous run, spin-up all services &"
+echo "looks for expected output in the log statements - for the given input movie file"
+echo "CAUTION: These tests are currently indeterministic due to arbirary sleep statements"
+echo "-----------------------------------------------"
 
-if ! [[ "$WAIT_FOR_SERVICES" =~ "^[0-9]+$" ]]
+
+# Determine time (in secs) to wait for all services to be up & running
+WAIT_FOR_SERVICES=$1
+if ! [[ $WAIT_FOR_SERVICES == ?(-)+([0-9]) ]];
 then
-    echo -e "No or invalid argument for startup-time for services. Assuming it to be 25 secs"
-    WAIT_FOR_SERVICES=25
+    echo -e "No or invalid argument for startup-time for services. Assuming it to be 30 secs"
+    WAIT_FOR_SERVICES=30
 fi
 echo -e "test asserts will be run $WAIT_FOR_SERVICES seconds after services are started"
 
 
-GREEN="\e[1;32m"
-RED="\e[1;31m"
-MAGENDA="\e[1;35m"
-RESET_COLOR="\e[0m"
-
 # Get logs from the particular service & look if the log contains a specific content that we are expecting
 CheckService() {
+    GREEN="\e[1;32m"
+    RED="\e[1;31m"
+    MAGENDA="\e[1;35m"
+    RESET_COLOR="\e[0m"
+
     SERVICE=$1
     PATT=$2
 
@@ -35,7 +42,7 @@ CheckService() {
 docker-compose stop
 
 # Remove kafka topics related to our services (clean start)
-docker exec kafka bash ./remove_all_topics.sh
+docker-compose -f ../docker-compose-kafka.yml exec kafka bash ./remove_all_topics.sh
 
 # Clear prev logs in containers
 #sudo bash ./clear-services-logs.sh

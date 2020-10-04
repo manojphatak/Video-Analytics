@@ -22,10 +22,10 @@ currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,"..", ".."))
 sys.path.append(os.path.join(currdir,".."))
 
-from cctv_surveillance.kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
+from common.kafka_client import KafkaCli
+from common.appcommon import init_logger, save_image_data_to_jpg, ensure_dir_path
 
-from cctv_surveillance.kafka_base_consumer import KafkaStreamingConsumer
+from common.kafka_base_consumer import KafkaStreamingConsumer
 
 
 OUTDIR = "/usr/app/out/ObjectDetector"

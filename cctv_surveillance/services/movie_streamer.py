@@ -10,10 +10,10 @@ import cv2
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger
-from kafka_producer import KafkaProducer
-import kafka_message_pb2 as KafkaMsg
+from common.kafka_client import KafkaCli
+from common.appcommon import init_logger
+from common.kafka_producer import KafkaProducer
+import protobuf.kafka_message_pb2 as KafkaMsg
 
 
 class MovieStreamer(KafkaProducer):

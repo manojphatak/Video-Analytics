@@ -10,10 +10,10 @@ volumes:
 
 
 services:
-
   movie-feeder:
-    build: .
-    #container_name: movie-feeder
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       TRANSACTIONS_TOPIC: cctv.raw-frames
@@ -24,14 +24,15 @@ services:
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
      - /etc/timezone:/etc/timezone:ro
      - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
   
 
   motion-detector:
-    build: .  
-    #container_name: motion-detector
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.raw-frames
@@ -41,13 +42,14 @@ services:
       - results:${DOCKER_HOME}/out
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "motion_detector.py"]  
 
 
   object-detector:
-    build: .  
-    #container_name: object-detector
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.motion-detected
@@ -57,13 +59,14 @@ services:
       - results:${DOCKER_HOME}/out
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance/object_detector
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services/object_detector
     entrypoint: ["python3", "object_detector.py"]    
 
 
   face-detector:
-    build: .
-    #container_name: face-detector
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.object-detected
@@ -72,13 +75,14 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_detector.py"]  
 
 
   face-matcher:
-    build: .
-    #container_name: face-matcher
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.faces-detected
@@ -90,13 +94,14 @@ services:
       - known-faces:${DOCKER_HOME}/faces  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_matcher.py"]    
 
 
   message-aggregator:
-    build: .
-    #container_name: message-aggregator
+    build:
+      context: ./Dockerfiles
+      dockerfile: ComputerVision.Dockerfile
     environment:
       KAFKA_BROKER_URL: kafka:29092
       INPUT_TOPIC: cctv.matched-faces
@@ -106,17 +111,17 @@ services:
       - results:/tmp  
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    working_dir: ${DOCKER_CODE}/cctv_surveillance
+    working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "message_aggregator.py"]  
 
   
   logstash:
     build:
-      context: .
+      context: ./Dockerfiles
       dockerfile: Logstash.Dockerfile
     volumes:
-      - ./conf/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
-      - ./kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
+      - ./config/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
+      - ./protobuf/kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
@@ -135,17 +140,15 @@ services:
   
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
-    #container_name: elasticsearch
     environment:
         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
         - "discovery.type=single-node"
         - "xpack.security.enabled=false"
-        #- "path.repo=[\"/usr/share/elasticsearch\"]"
     ports:
       -   "9200:9200"
       -   "9300:9300"
     volumes:
-      - ./conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     healthcheck:

@@ -11,9 +11,9 @@ from pipe import Pipe, select, where
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaCli
-from cctv_surveillance.appcommon import init_logger, save_image_data_to_jpg
-from kafka_base_consumer import KafkaStreamingConsumer
+from common.kafka_client import KafkaCli
+from common.appcommon import init_logger, save_image_data_to_jpg
+from common.kafka_base_consumer import KafkaStreamingConsumer
 
 @Pipe
 def tolist(iterable):

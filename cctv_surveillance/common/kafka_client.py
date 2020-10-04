@@ -8,7 +8,11 @@ from kafka import KafkaProducer, KafkaConsumer
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-import kafka_message_pb2 as KafkaMsg
+currdir = os.path.dirname(__file__)
+sys.path.append(os.path.join(currdir,".."))
+
+#todo: a dependency issue, which needs to be fixed
+import protobuf.kafka_message_pb2 as KafkaMsg  
 
 logger = logging.getLogger("video_analytics")
 
