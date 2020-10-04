@@ -1,8 +1,8 @@
 
-ê
-kafka_message.protocctv"Ä
-Frame1
-	raw_frame (2.cctv.Frame.RawFrameRrawFrame
+ß
+kafka_message.proto"¿
+Frame,
+	raw_frame (2.Frame.RawFrameRrawFrame
 	t_created (RtCreated
 	t_updated (RtUpdated
 objects (	Robjects

@@ -2,12 +2,12 @@ import os
 import sys
 import logging
 
-from appcommon import init_logger
+from .appcommon import init_logger
 
 currdir = os.path.dirname(__file__)
 sys.path.append(os.path.join(currdir,".."))
 
-from kafka_client import KafkaCli
+from .kafka_client import KafkaCli
 
 logger = init_logger(__file__)
 

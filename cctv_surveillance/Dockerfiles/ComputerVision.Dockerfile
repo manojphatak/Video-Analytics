@@ -40,7 +40,7 @@ WORKDIR /usr/app
 RUN mkdir /usr/app/temp \
     && mkdir /usr/app/out
 
-# Checkout the source code
+# Checkout the source code & compile protobuf
 RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics   \
     && cd Video-Analytics   \
     && git checkout dynamic \

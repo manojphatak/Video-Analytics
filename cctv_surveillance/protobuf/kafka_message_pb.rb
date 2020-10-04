@@ -3,7 +3,6 @@
 
 require 'google/protobuf'
 
-
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_message "Frame" do
     optional :raw_frame, :message, 1, "Frame.RawFrame"
