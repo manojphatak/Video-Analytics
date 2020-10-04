@@ -67,14 +67,14 @@ docker-compose up -d
  - The CCTV Surveillance app is structured as follows:
  ```
 Video Frames Stream |-
-					| motion-detector (A)
-					| object-detector (B)
-					| license-plate-detector (TODO)
-					| face-detector (C)
-					| face-matcher (D)
-					| logstash pipeline (E)
-					| ElasticSearch	
-					| Kibana (TODO) 			 
+		    | motion-detector (A)
+		    | object-detector (B)
+		    | license-plate-detector (TODO)
+		    | face-detector (C)
+		    | face-matcher (D)
+		    | logstash pipeline (E)
+		    | ElasticSearch	
+		    | Kibana (TODO) 			 
  ```
  ```
  A: motion-detector: Most of video frames from CCTV involves non-activity & can be thrown right-away. This service takes a diff btw current frame & baseline frame, to determine if there is an activity
