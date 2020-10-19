@@ -43,6 +43,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "motion_detector.py"]  
 
 
@@ -60,6 +61,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services/object_detector
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "object_detector.py"]    
 
 
@@ -76,6 +78,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "face_detector.py"]  
 
 
@@ -95,6 +98,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "face_matcher.py"]    
 
 
@@ -112,6 +116,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
+    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "message_aggregator.py"]  
 
   
