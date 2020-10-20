@@ -44,6 +44,5 @@ RUN mkdir /usr/app/temp \
 RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics   \
     && cd Video-Analytics   \
     && git checkout dynamic \
-    && cd cctv_surveillance \
-    && protoc --python_out=. ./kafka_message.proto
+    && cd cctv_surveillance
 

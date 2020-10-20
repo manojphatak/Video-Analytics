@@ -22,10 +22,10 @@ services:
     volumes:
      - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
+     - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
      - /etc/timezone:/etc/timezone:ro
      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
-    command: sh -c "protoc --python_out=. ./kafka_message.proto"
     entrypoint: ["python3", "movie_streamer.py"]
   
 
@@ -40,6 +40,7 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
+      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
@@ -57,6 +58,7 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
+      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services/object_detector
@@ -73,6 +75,7 @@ services:
       OUTPUT_TOPIC: cctv.faces-detected
     volumes:
       - ../:${DOCKER_SANDBOX}  
+      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
@@ -92,11 +95,12 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - known-faces:${DOCKER_HOME}/faces  
+      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
-    entrypoint: ["python3", "face_matcher.py"]    
-
+    entrypoint: ["python3", "face_matcher.py"]  
+   
 
   message-aggregator:
     build:
@@ -109,6 +113,7 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - results:/tmp  
+      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
