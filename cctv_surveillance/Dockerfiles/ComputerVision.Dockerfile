@@ -23,6 +23,10 @@ RUN pkg-config --libs --cflags dlib-1 \
     && python setup.py install \
     && rm -rf ~/dlib /var/cache/apk/* /usr/share/man /usr/local/share/man /tmp/*
 
+# for making python cv2 to work
+RUN apt-get update -y \
+    && apt-get install ffmpeg libsm6 libxext6  -y
+
 
 # Install Protocol buffers
 RUN PROTOC_ZIP=protoc-3.7.1-linux-x86_64.zip \
@@ -34,6 +38,7 @@ RUN PROTOC_ZIP=protoc-3.7.1-linux-x86_64.zip \
 ADD ./requirements_handcrafted.txt ./
 RUN pip install -r requirements_handcrafted.txt
 
+
 WORKDIR /usr/app
 
 # Create output directories for the programs
@@ -43,6 +48,6 @@ RUN mkdir /usr/app/temp \
 # Checkout the source code & compile protobuf
 RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics   \
     && cd Video-Analytics   \
-    && git checkout dynamic \
+    && git checkout aws \
     && cd cctv_surveillance
 
