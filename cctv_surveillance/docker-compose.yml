@@ -23,8 +23,8 @@ services:
      - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-     - /etc/timezone:/etc/timezone:ro
-     - /etc/localtime:/etc/localtime:ro
+    #  - /etc/timezone:/etc/timezone:ro
+    #  - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "movie_streamer.py"]
   
