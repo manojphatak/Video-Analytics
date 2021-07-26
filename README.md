@@ -52,9 +52,13 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
 	# This spins up Kafaka as well as services for visualizing & administrating Docker Containers (Portainer) and Kafka message (Kafdrop)
 	```
 
-3. Set the environment. e.g. filesystem path where the exported cctv footage movie files can be picked up
-This can be done by editing the .env file & running it...
-Edit the ".env" file to update the environment variable to work with your machine.
+3. Edit the environment for options, especially for picking up the input video data files
+   If you just want to set the input folder for video data files, just copy your files to the location referred by the ```.env```
+   
+   ```
+   mkdir -p /usr/VideoAnalytics/movies
+   cp -r ${MOVIE_FILES}//usr/VideoAnalytics/movies
+   ```   
 
 	```sh
 	source .env
