@@ -38,28 +38,48 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
   
 
 ## How to run
+
 1. Change directory to that of the app
-```sh
-cd cctv-surveillance
-```
+ 
+	```sh
+	cd cctv-surveillance
+	```
+
 2. Spin up Kafka Cluster
-```sh
-docker-compose -f ../docker-compose-kafka.yml up -d
-# This spins up Kafaka as well as services for visualizing & administrating Docker Containers (Portainer) and Kafka message (Kafdrop)
-```
+
+	```sh
+	docker-compose -f ../docker-compose-kafka.yml up -d
+	# This spins up Kafaka as well as services for visualizing & administrating Docker Containers (Portainer) and Kafka message (Kafdrop)
+	```
+
 3. Set the environment. e.g. filesystem path where the exported cctv footage movie files can be picked up
 This can be done by editing the .env file & running it...
-
 Edit the ".env" file to update the environment variable to work with your machine.
-```sh
-source .env
-```
- - Run the App, by spinning up all required services
-```sh
-docker-compose up -d
-```
+
+	```sh
+	source .env
+	```
+
+4. Download YOLO weights file
+   ```
+   wget -o services/object_detector/yolov3.weights "https://pjreddie.com/media/files/yolov3.weights"
+   ```
+
+
+5. Run the App, by spinning up all required services
+
+	```sh
+	docker-compose up -d
+	```
+
+6. Point your browser to ```http://localhost:9001" to browse through docker containers
+   
+
+7. For outputput images, browse to your docker-volume ```cctv_surveillance_results``` which should be mounted at ```/var/lib/docker/volumes/cctv_surveillance_results/_data``` on host machine
+   
   
-  ## Code Organisation
+
+## Code Organisation
   
  - Though the current use-case is for churning out CCTV footage data, this project can be used to build any app that works on ***Stream of data***. Each app is mapped to separate folder e.g. cctv_surveillance.
  - Every app is simply a composition of multiple microservices, which communicate to each other through ***Kafka Message Broker***

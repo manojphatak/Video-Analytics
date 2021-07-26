@@ -23,8 +23,8 @@ services:
      - ..:${DOCKER_SANDBOX}                              # this is for testing the code before commit
      - ${MOVIE_FILES}:${DOCKER_HOME}/movies
      - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-    #  - /etc/timezone:/etc/timezone:ro
-    #  - /etc/localtime:/etc/localtime:ro
+     - /etc/timezone:/etc/timezone:ro
+     - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "movie_streamer.py"]
   
@@ -41,8 +41,8 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
       - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "motion_detector.py"]  
 
@@ -59,8 +59,8 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - results:${DOCKER_HOME}/out
       - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services/object_detector
     entrypoint: ["python3", "object_detector.py"]    
 
@@ -76,8 +76,8 @@ services:
     volumes:
       - ../:${DOCKER_SANDBOX}  
       - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_detector.py"]  
 
@@ -96,8 +96,8 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - known-faces:${DOCKER_HOME}/faces  
       - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "face_matcher.py"]  
    
@@ -114,8 +114,8 @@ services:
       - ../:${DOCKER_SANDBOX}  
       - results:/tmp  
       - ./protobuf/kafka_message_pb2.py:${DOCKER_CODE}/cctv_surveillance/protobuf/kafka_message_pb2.py:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     working_dir: ${DOCKER_CODE}/cctv_surveillance/services
     entrypoint: ["python3", "message_aggregator.py"]  
 
@@ -127,8 +127,8 @@ services:
     volumes:
       - ./config/logstash.conf:/usr/share/logstash/config/kafka-logstash.conf:ro  
       - ./protobuf/kafka_message_pb.rb:/usr/share/logstash/config/kafka_message_pb.rb:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - "5000:5000"
       - "9600:9600"
@@ -154,8 +154,8 @@ services:
       -   "9300:9300"
     volumes:
       - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     healthcheck:
       test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
    
