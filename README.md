@@ -53,13 +53,8 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
 	```
 
 3. Edit the environment for options, especially for picking up the input video data files
-   If you just want to set the input folder for video data files, just copy your files to the location referred by the ```.env```
+   Ensure to have an environment variable ```MOVIE_FILES``` that points to your video data files.
    
-   ```
-   mkdir -p /usr/VideoAnalytics/movies
-   cp -r ${MOVIE_FILES}//usr/VideoAnalytics/movies
-   ```   
-
 	```sh
 	source .env
 	```
