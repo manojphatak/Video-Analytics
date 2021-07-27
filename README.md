@@ -53,7 +53,6 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
 	```
 
 3. Edit the environment for options, especially for picking up the input video data files
-   Ensure to have an environment variable ```MOVIE_FILES``` that points to your video data files.
    
 	```sh
 	source .env
@@ -61,7 +60,7 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
 
 4. Download YOLO weights file
    ```
-   wget -o services/object_detector/yolov3.weights "https://pjreddie.com/media/files/yolov3.weights"
+   wget -O services/object_detector/yolov3.weights "https://pjreddie.com/media/files/yolov3.weights"
    ```
 
 
@@ -71,7 +70,7 @@ However, only thing it expects is to have ***docker*** & ***docker-compose*** in
 	docker-compose up -d
 	```
 
-6. Point your browser to ```http://localhost:9001" to browse through docker containers
+6. Point your browser to http://localhost:9001 to browse through docker containers
    
 
 7. For outputput images, browse to your docker-volume ```cctv_surveillance_results``` which should be mounted at ```/var/lib/docker/volumes/cctv_surveillance_results/_data``` on host machine
