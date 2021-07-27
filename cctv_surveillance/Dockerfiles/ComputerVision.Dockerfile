@@ -48,6 +48,6 @@ RUN mkdir /usr/app/temp \
 # Checkout the source code & compile protobuf
 RUN git clone https://github.com/manojphatak/Video-Analytics.git Video-Analytics   \
     && cd Video-Analytics   \
-    && git checkout aws \
+    && git checkout dynamic \
     && cd cctv_surveillance
 
