@@ -68,6 +68,6 @@ class KafkaEndConsumer(KafkaBaseConsumer):
         kafkaConsumer.register_consumer()
         logger.debug("polling kafka topic now...")
         for m in kafkaConsumer.consumer:
-            logger.debug("received message from Kafka") 
             self._frameid += 1
+            logger.debug(f"received frame id#{self._frameid} from Kafka") 
             handler(m.value)
